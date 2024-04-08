@@ -3,11 +3,11 @@ from itertools import product
 input=sys.stdin.readline
 
 n=4
-m,K=map(int,input().split())
+m,turn=map(int,input().split())
 px,py=map(int,input().split())
 px-=1
 py-=1
-round=0
+t=0
 
 #   상,좌,하,우
 dx1=[-1,0,1,0]
@@ -17,25 +17,31 @@ dy1=[0,-1,0,1]
 dx2=[-1,-1,0,1,1,1,0,-1]
 dy2=[0,-1,-1,-1,0,1,1,1]
 
-a=[[[] for _ in range(n)] for _ in range(n)]
-b=[[[] for _ in range(n)] for _ in range(n)]
-c=[[0]*n for _ in range(n)]
+a=[[[[0]*8 for j in range(n)] for i in range(n)] for _ in range(26)] # 몬스터 맵. t턴의 (x,y) 에 d 방향 몬스터 수
+b=[[[] for _ in range(n)] for _ in range(n)] # 몬스터 시체 맵. 시체가 사라질 각각의 턴을 저장
+# c=[[0]*n for _ in range(n)]
 
 for _ in range(m):
     x,y,d=map(int,input().split())
     x-=1
     y-=1
     d-=1
-    a[x][y].append(d)
+    a[0][x][y][d]+=1
 
 def duplicate():
-    global b
+    global a
 
     for x in range(n):
         for y in range(n):
-            if len(a[x][y])>0:
-                for i in a[x][y]:
-                    b[x][y].append(i)
+            for d in range(8):
+                if a[t][x][y][d]==0:
+                    continue
+                a[t+1][x][y][d]+=a[t][x][y][d]
+
+def canMove(nx,ny):
+    if inBoard(nx,ny) and (nx,ny)!=(px,py) and len(b[nx][ny])==0:
+        return True
+    return False
 
 def inBoard(nx,ny):
     if 0<=nx<n and 0<=ny<n:
@@ -45,42 +51,42 @@ def inBoard(nx,ny):
 def monsterMove():
     global a
 
-    tmp=[[[] for _ in range(n)] for _ in range(n)]
+    tmp=[[[0]*8 for j in range(n)] for i in range(n)]
     for x in range(n):
         for y in range(n):
-            if len(a[x][y])==0:continue
-            for d in a[x][y]:
+            for d in range(8):
+                if a[t][x][y][d]==0:continue
                 nx,ny=x+dx2[d],y+dy2[d]
                 nd=d
-                canMove=False
-                if inBoard(nx,ny) and (nx,ny)!=(px,py) and c[nx][ny]==0:
-                    canMove=True
+                ok=False
+                if canMove(nx,ny):
+                    ok=True
                 else:
-                    while True:
+                    for _ in range(7):
                         nd = (nd + 1) % 8
                         nx, ny = x + dx2[nd], y + dy2[nd]
-                        if inBoard(nx,ny) and (nx,ny)!=(px,py) and c[nx][ny]==0:
-                            canMove=True
+                        if canMove(nx,ny):
+                            ok=True
                             break
-                if canMove:
-                    tmp[nx][ny].append(nd)
+                if ok:
+                    tmp[nx][ny][nd]+=a[t][x][y][d]
                 else:
-                    tmp[x][y].append(d)
-    a=tmp
+                    tmp[x][y][d]+=a[t][x][y][d]
+    a[t]=tmp
 
 def copyBoard(a):
-    tmp=[[[] for _ in range(n)] for _ in range(n)]
+    tmp=[[[[0]*8 for j in range(n)] for i in range(n)] for _ in range(26)]
 
     for x in range(n):
         for y in range(n):
-            if len(a[x][y])>0:
-                for d in a[x][y]:
-                    tmp[x][y].append(d)
+            for d in range(8):
+                if a[t][x][y][d]==0:continue
+                tmp[t][x][y][d]=a[t][x][y][d]
 
     return tmp
 
 def pacmanMove():
-    global px,py,c,a
+    global px,py,b,a
 
     cand=[]
     for prod in product([0,1,2,3],repeat=3):
@@ -88,14 +94,15 @@ def pacmanMove():
         x, y = px, py
         cnt=0
         ok=True
-        for d in prod:
-            nx,ny=x+dx1[d],y+dy1[d]
+        for dir in prod:
+            nx,ny=x+dx1[dir],y+dy1[dir]
             if not inBoard(nx,ny):
                 ok=False
                 break
-            if len(tmp[nx][ny])>0:
-                cnt+=len(tmp[nx][ny])
-                tmp[nx][ny].clear()
+            for d in range(8):
+                if tmp[t][nx][ny][d]!=0:
+                    cnt+=tmp[t][nx][ny][d]
+                    tmp[t][nx][ny][d]=0
             x,y=nx,ny
         if ok:
             cand.append([cnt,prod])
@@ -104,33 +111,34 @@ def pacmanMove():
         return
     cand.sort(key=lambda x:(-x[0],x[1]))
     prod=cand[0][1]
-    for d in prod:
-        nx,ny=px+dx1[d],py+dy1[d]
-        if len(a[nx][ny])>0:
-            a[nx][ny].clear()
-            c[nx][ny]=round
+    for dir in prod:
+        nx,ny=px+dx1[dir],py+dy1[dir]
+        for d in range(8):
+            if a[t][nx][ny][d]!=0:
+                a[t][nx][ny][d]=0
+                if t not in b[nx][ny]:
+                    b[nx][ny].append(t)
         px,py=nx,ny
-    tmp=-1
 
 def remove():
-    global c
+    global b
 
     for x in range(n):
         for y in range(n):
-            if c[x][y]!=0 and round>=c[x][y]+2:
-                c[x][y]=0
+            if len(b[x][y])==0:continue
+            if t-2 in b[x][y]:
+                b[x][y].remove(t-2)
 
-def complete():
-    global a,b
+def add():
+    global a
 
     for x in range(n):
         for y in range(n):
-            if len(b[x][y])>0:
-                for d in b[x][y]:
-                    a[x][y].append(d)
-                b[x][y].clear()
+            for d in range(8):
+                if a[t][x][y][d]==0:continue
+                a[t+1][x][y][d]+=a[t][x][y][d]
 
-for round in range(1,K+1):
+for t in range(turn):
     # 몬스터 복제 시도
     duplicate()
     # 몬스터 이동
@@ -139,12 +147,14 @@ for round in range(1,K+1):
     pacmanMove()
     # 몬스터 시체 소멸
     remove()
-    # 몬스터 복제 완성
-    complete()
+    # 이번 턴 생존 몬스터 다음 턴에도 추가
+    add()
 
 ans=0
 for x in range(n):
     for y in range(n):
-        if len(a[x][y])>0:
-            ans+=len(a[x][y])
+        for d in range(8):
+            if a[turn][x][y][d]==0:continue
+            ans+=a[turn][x][y][d]
+
 print(ans)
