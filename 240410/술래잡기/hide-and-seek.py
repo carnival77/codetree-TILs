@@ -44,7 +44,7 @@ for _ in range(h):
 
 tx,ty=n//2,n//2
 td=0
-kind=2
+kind=1
 inx=1
 
 def inBoard(nx,ny):
