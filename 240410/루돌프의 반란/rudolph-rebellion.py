@@ -1,200 +1,201 @@
-# (x, y)가 보드 내의 좌표인지 확인하는 함수입니다.
-def inBoard(x, y):
-    if 1<=x<=n and 1<=y<=n:
+import sys
+input=sys.stdin.readline
+
+n,m,p,c,d=map(int,input().split())
+rx,ry=map(int,input().split())
+rx-=1
+ry-=1
+round=0
+
+a=[[0]*n for _ in range(n)]
+a[rx][ry]=-1
+
+points=[None]+[0]*p
+panic=[None]+[0]*p
+alive=[None]+[True]*p
+spos=[None]*(p+1)
+for _ in range(1,p+1):
+    no,x,y=map(int,input().split())
+    x-=1
+    y-=1
+    spos[no]=[x,y]
+    a[x][y]=no
+
+# 산타 방향
+dx=[-1,0,1,0]
+dy=[0,1,0,-1]
+
+# 루돌프 방향
+dx1=[-1,-1,-1,0,1,1,1,0]
+dy1=[-1,0,1,1,1,0,-1,-1]
+
+def getClosestNo(rx,ry):
+
+    cand=[]
+
+    for no in range(1,p+1):
+        if not alive[no]:continue
+        x,y=spos[no]
+        dist=(rx-x)**2+(ry-y)**2
+        cand.append([dist,x,y,no])
+
+    cand.sort(key=lambda x:(x[0],-x[1],-x[2]))
+    return cand[0][3]
+
+def inBoard(nx,ny):
+    if 0<=nx<n and 0<=ny<n:
         return True
     return False
 
-n, m, p, c, d = map(int, input().split())
-rx,ry = map(int, input().split())
+# 루돌프와의 충돌 후 산타는 포물선의 궤적으로 이동하여 착지하게 되는 칸에서만 상호작용이 발생할 수 있습니다.
+# 산타는 충돌 후 착지하게 되는 칸에 다른 산타가 있다면 그 산타는 1칸 해당 방향으로 밀려나게 됩니다.
+# 그 옆에 산타가 있다면 연쇄적으로 1칸씩 밀려나는 것을 반복하게 됩니다.
+# 게임판 밖으로 밀려나오게 된 산타의 경우 게임에서 탈락됩니다.
+# 충돌한 산타에 의해 밀려난 다른 산타들의 상호작용
+def interaction(no,mx,my):
+    global spos,alive
 
-point = [0 for _ in range(p + 1)]
-pos = [(0, 0) for _ in range(p + 1)]
-a = [[0 for _ in range(n + 1)] for _ in range(n + 1)]
-alive = [False for _ in range(p + 1)]
-panic = [0 for _ in range(p + 1)]
+    sx,sy=spos[no]
+    nx,ny=sx+mx,sy+my
 
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
+    if inBoard(nx,ny):
+        if a[nx][ny]>0:
+            interaction(a[nx][ny],mx,my)
+        a[nx][ny]=no
+        spos[no]=[nx,ny]
+        return
+    else:
+        spos[no]=None
+        alive[no]=False
+        return
 
-for _ in range(p):
-    id, x, y = tuple(map(int, input().split()))
-    pos[id] = (x, y)
-    a[pos[id][0]][pos[id][1]] = id
-    alive[id] = True
+# 루돌프가 움직여서 충돌이 일어난 경우, 해당 산타는 C만큼의 점수를 얻게 됩니다.
+# 이와 동시에 산타는 루돌프가 이동해온 방향으로 C 칸 만큼 밀려나게 됩니다.
+# 산타가 움직여서 충돌이 일어난 경우, 해당 산타는 D만큼의 점수를 얻게 됩니다.
+# 이와 동시에 산타는 자신이 이동해온 반대 방향으로 D 칸 만큼 밀려나게 됩니다.
+# 밀려나는 것은 포물선 모양을 그리며 밀려나는 것이기 때문에 이동하는 도중에 충돌이 일어나지는 않고
+# 정확히 원하는 위치에 도달하게 됩니다.
+# 만약 밀려난 위치가 게임판 밖이라면 산타는 게임에서 탈락됩니다.
+# 만약 밀려난 칸에 다른 산타가 있는 경우 상호작용이 발생합니다.
+# 산타는 루돌프와의 충돌 후 기절을 하게 됩니다. 현재가 k번째 턴이었다면,
+# (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+def crush(kind,no,sx,sy,mx,my):
+    global panic,points,alive,spos
 
-for t in range(1, m + 1):
-    closestX, closestY, closestIdx = 10000, 10000, 0
+    panic[no]=round+1
 
-    # 가장 가까운 산타 선택
-    cand = []
+    if kind==1:
+        points[no] += c
+        nx,ny=sx+mx*c,sy+my*c
+    else:
+        points[no] += d
+        mx,my=-mx,-my
+        nx,ny=sx+mx*d,sy+my*d
 
-    # 살아있는 산타 중 루돌프에 가장 가까운 산타를 찾습니다.
-    for i in range(1, p + 1):
-        if not alive[i]:
-            continue
+    if not inBoard(nx,ny):
+        alive[no]=False
+        spos[no]=None
+    else:
+        if a[nx][ny]>0:
+            interaction(a[nx][ny],mx,my)
+        a[nx][ny]=no
+        spos[no]=[nx,ny]
 
-        currentBest = ((closestX - rx) ** 2 + (closestY - ry) ** 2, (-closestX, -closestY))
-        currentValue = ((pos[i][0] - rx) ** 2 + (pos[i][1] - ry) ** 2, (-pos[i][0], -pos[i][1]))
+# 루돌프는 가장 가까운 산타를 향해 1칸 돌진합니다.
+# 단, 게임에서 탈락하지 않은 산타 중 가장 가까운 산타를 선택해야 합니다.
+# 만약 가장 가까운 산타가 2명 이상이라면, r 좌표가 큰 산타를 향해 돌진합니다.
+# r이 동일한 경우, c 좌표가 큰 산타를 향해 돌진합니다.
+# 루돌프는 상하좌우, 대각선을 포함한 인접한 8방향 중 하나로 돌진할 수 있습니다.
+# (편의상 인접한 대각선 방향으로 전진하는 것도 1칸 전진하는 것이라 생각합니다.)
+# 가장 우선순위가 높은 산타를 향해 8방향 중 가장 가까워지는 방향으로 한 칸 돌진합니다.
+def rmove():
+    global rx,ry,a
 
-        if currentValue < currentBest:
-            closestX, closestY = pos[i]
-            closestIdx = i
+    # 단, 게임에서 탈락하지 않은 산타 중 가장 가까운 산타를 선택해야 합니다.
+    no=getClosestNo(rx,ry)
+    sx,sy=spos[no]
+    a[rx][ry] = 0
+    currentDist=(rx-sx)**2+(ry-sy)**2
+    dx,dy=dx1,dy1
+    mx,my=0,0
+    next_rx,next_ry=0,0
 
-    # 가장 가까운 산타의 방향으로 루돌프가 이동합니다.
-    if closestIdx:
-        prx,pry=rx,ry
-        moveX = 0
-        if closestX > rx:
-            moveX = 1
-        elif closestX < rx:
-            moveX = -1
+    # 루돌프는 가장 가까운 산타를 향해 1칸 돌진합니다.
+    for k in range(8):
+        nx,ny=rx+dx[k],ry+dy[k]
+        dist=(nx-sx)**2+(ny-sy)**2
+        if dist<currentDist:
+            currentDist=dist
+            next_rx,next_ry=nx,ny
+            mx,my=dx[k],dy[k]
 
-        moveY = 0
-        if closestY > ry:
-            moveY = 1
-        elif closestY < ry:
-            moveY = -1
+    # 산타와 루돌프가 같은 칸에 있게 되면 충돌이 발생합니다.
+    if a[next_rx][next_ry]>0:
+        crush(1,no,next_rx,next_ry,mx,my)
+    rx,ry=next_rx,next_ry
+    a[rx][ry]=-1
 
-        rx,ry = (rx + moveX, ry + moveY)
-        a[prx][pry] = 0
+# 산타는 1번부터 P번까지 순서대로 움직입니다.
+# 기절했거나 이미 게임에서 탈락한 산타는 움직일 수 없습니다.
+# 산타는 루돌프에게 거리가 가장 가까워지는 방향으로 1칸 이동합니다.
+# 산타는 다른 산타가 있는 칸이나 게임판 밖으로는 움직일 수 없습니다.
+# 움직일 수 있는 칸이 없다면 산타는 움직이지 않습니다.
+# 움직일 수 있는 칸이 있더라도 만약 루돌프로부터 가까워질 수 있는 방법이 없다면 산타는 움직이지 않습니다.
+# 산타는 상하좌우로 인접한 4방향 중 한 곳으로 움직일 수 있습니다.
+# 이때 가장 가까워질 수 있는 방향이 여러 개라면, 상우하좌 우선순위에 맞춰 움직입니다.
+def smove():
+    global a,spos
 
-    # 루돌프의 이동으로 충돌한 경우, 산타를 이동시키고 처리를 합니다.
-    if rx == closestX and ry == closestY:
-        # 산타는 루돌프가 이동해온 방향으로 C 칸 만큼 밀려나게 됩니다.
-        firstX = closestX + moveX * c
-        firstY = closestY + moveY * c
-        lastX, lastY = firstX, firstY
+    for no in range(1,p+1):
+        if not alive[no] or panic[no]>=round:continue
+        x,y=spos[no]
+        currentDist=(rx-x)**2+(ry-y)**2
+        a[x][y]=0
+        canMove=False
+        next_sx, next_sy = 0, 0
+        mx,my=0,0
 
-        panic[closestIdx] = t + 1
+        for k in range(4):
+            nx,ny=x+dx[k],y+dy[k]
+            if not inBoard(nx,ny) or a[nx][ny]>0: continue
+            dist=(rx-nx)**2+(ry-ny)**2
+            if dist<currentDist:
+                currentDist=dist
+                next_sx, next_sy = nx,ny
+                mx,my=dx[k],dy[k]
+                canMove=True
 
-        # 만약 이동한 위치에 산타가 있을 경우, 연쇄적으로 이동이 일어납니다.
-        while inBoard(lastX, lastY) and a[lastX][lastY] > 0:
-            lastX += moveX
-            lastY += moveY
-
-        # 연쇄적으로 충돌이 일어난 가장 마지막 위치에서 시작해, 충돌된 맨 첫 산타까지,
-        # 순차적으로 보드판에 있는 산타를 한칸씩 이동시킵니다.
-        while not (lastX == firstX and lastY == firstY):
-            beforeX = lastX - moveX
-            beforeY = lastY - moveY
-
-            # 만약 밀쳐져서 나간 이번 산타의 이전 위치가 격자 밖이면 중지
-            # if not inBoard(beforeX, beforeY):
-            #     break
-
-            idx = a[beforeX][beforeY]
-
-            # 밀쳐진 위치가 격자 밖이면 탈락
-            if not inBoard(lastX, lastY):
-                alive[idx] = False
-            # 격자 안이면 이동
-            else:
-                a[lastX][lastY] = a[beforeX][beforeY]
-                pos[idx] = (lastX, lastY)
-
-            lastX, lastY = beforeX, beforeY
-
-        # 루돌프가 움직여서 충돌이 일어난 경우, 해당 산타는 C만큼의 점수를 얻게 됩니다
-        point[closestIdx] += c
-        # pos[closestIdx] = (firstX, firstY)
-        # 충돌된 산타가 이동한 위치가 격자 안이면 이동
-        if inBoard(firstX, firstY):
-            pos[closestIdx] = (firstX, firstY)
-            a[firstX][firstY] = closestIdx
-        # 아니면 탈락
+        if not canMove:
+            a[x][y]=no
         else:
-            alive[closestIdx] = False
-
-    # 루돌프 이동 위치 업데이트
-    a[rx][ry] = -1
-
-    # 각 산타들은 루돌프와 가장 가까운 방향으로 한칸 이동합니다.
-    for i in range(1, p+1):
-        # 기절했거나 이미 게임에서 탈락한 산타는 움직일 수 없습니다.
-        if not alive[i] or panic[i] >= t:
-            continue
-
-        # 산타는 루돌프에게 거리가 가장 가까워지는 방향으로 1칸 이동합니다.
-        minDist = (pos[i][0] - rx)**2 + (pos[i][1] - ry)**2
-        moveDir = -1
-
-        for dir in range(4):
-            nx = pos[i][0] + dx[dir]
-            ny = pos[i][1] + dy[dir]
-
-            # 산타는 다른 산타가 있는 칸이나 게임판 밖으로는 움직일 수 없습니다.
-            if not inBoard(nx, ny) or a[nx][ny] > 0:
-                continue
-
-            dist = (nx - rx)**2 + (ny - ry)**2
-            if dist < minDist:
-                minDist = dist
-                moveDir = dir
-
-        # 움직일 수 있는 칸이 없다면 산타는 움직이지 않습니다.
-        # 움직일 수 있는 칸이 있더라도 만약 루돌프로부터 가까워질 수 있는 방법이 없다면 산타는 움직이지 않습니다.
-        # 움직일 수 있는 방향이 있다면, 이동
-        if moveDir != -1:
-            nx = pos[i][0] + dx[moveDir]
-            ny = pos[i][1] + dy[moveDir]
-
-            # 산타의 이동으로 충돌한 경우, 산타를 이동시키고 처리를 합니다.
-            if nx == rx and ny == ry:
-                panic[i] = t + 1
-
-                #  산타는 자신이 이동해온 반대 방향으로 D 칸 만큼 밀려나게 됩니다.
-                moveX = -dx[moveDir]
-                moveY = -dy[moveDir]
-
-                firstX = nx + moveX * d
-                firstY = ny + moveY * d
-                lastX, lastY = firstX, firstY
-
-                # 만약 산타의 힘이 1이라면, 제자리로 돌아오는 것이므로 포인트만 얻는다.
-                if d == 1:
-                    point[i] += d
-                else:
-                    # 만약 이동한 위치에 산타가 있을 경우, 연쇄적으로 이동이 일어납니다.
-                    while inBoard(lastX, lastY) and a[lastX][lastY] > 0:
-                        lastX += moveX
-                        lastY += moveY
-
-                    # 연쇄적으로 충돌이 일어난 가장 마지막 위치에서 시작해,
-                    # 순차적으로 보드판에 있는 산타를 한칸씩 이동시킵니다.
-                    while not (lastX == firstX and lastY == firstY):
-                        beforeX = lastX - moveX
-                        beforeY = lastY - moveY
-
-                        idx = a[beforeX][beforeY]
-
-                        if not inBoard(lastX, lastY):
-                            alive[idx] = False
-                        else:
-                            a[lastX][lastY] = a[beforeX][beforeY]
-                            pos[idx] = (lastX, lastY)
-
-                        lastX, lastY = beforeX, beforeY
-
-                    # 산타가 움직여서 충돌이 일어난 경우, 해당 산타는 D만큼의 점수를 얻게 됩니다
-                    point[i] += d
-                    a[pos[i][0]][pos[i][1]] = 0
-                    # pos[i] = (firstX, firstY)
-                    if inBoard(firstX, firstY):
-                        pos[i] = (firstX, firstY)
-                        a[firstX][firstY] = i
-                    else:
-                        alive[i] = False
+            spos[no] = [next_sx, next_sy]
+            if a[next_sx][next_sy]==-1:
+                crush(2,no,next_sx,next_sy,mx,my)
             else:
-                a[pos[i][0]][pos[i][1]] = 0
-                pos[i] = (nx, ny)
-                a[nx][ny] = i
+                a[next_sx][next_sy]=no
 
-    # 라운드가 끝나고 탈락하지 않은 산타들의 점수를 1 증가시킵니다.
-    for i in range(1, p+1):
-        if alive[i]:
-            point[i] += 1
+def check():
+    for no in range(1,p+1):
+        if alive[no]:
+            return False
+    return True
 
+def getAllPoint():
+    global points
 
-# 결과를 출력합니다.
-for i in range(1, p + 1):
-    print(point[i], end=" ")
+    for no in range(1, p + 1):
+        if alive[no]:
+            points[no]+=1
+
+for round in range(1,m+1):
+    # 루돌프 움직임
+    rmove()
+    # 산타 움직임
+    smove()
+    # 산타 모두 탈락 여부 체크
+    if check():
+        break
+    # 생존 상태면 점수 획득
+    getAllPoint()
+
+print(*points[1:])
