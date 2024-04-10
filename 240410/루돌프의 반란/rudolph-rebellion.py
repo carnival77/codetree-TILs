@@ -1,9 +1,10 @@
 # (x, y)가 보드 내의 좌표인지 확인하는 함수입니다.
-def inBoard(x, y):
-    return 1 <= x and x <= n and 1 <= y and y <= n
+def inBoard(nx,ny):
+    if 0<=nx<n and 0<=ny<n:
+        return True
+    return False
 
 n, m, p, c, d = map(int, input().split())
-# rudolf = tuple(map(int, input().split()))
 rx,ry = map(int, input().split())
 
 point = [0 for _ in range(p + 1)]
@@ -79,10 +80,6 @@ for t in range(1, m + 1):
             beforeX = lastX - moveX
             beforeY = lastY - moveY
 
-            # 만약 밀쳐져서 나간 이번 산타의 이전 위치가 격자 밖이면 중지
-            # if not inBoard(beforeX, beforeY):
-            #     break
-
             idx = a[beforeX][beforeY]
 
             # 밀쳐진 위치가 격자 밖이면 탈락
@@ -97,7 +94,6 @@ for t in range(1, m + 1):
 
         # 루돌프가 움직여서 충돌이 일어난 경우, 해당 산타는 C만큼의 점수를 얻게 됩니다
         point[closestIdx] += c
-        # pos[closestIdx] = (firstX, firstY)
         # 충돌된 산타가 이동한 위치가 격자 안이면 이동
         if inBoard(firstX, firstY):
             pos[closestIdx] = (firstX, firstY)
