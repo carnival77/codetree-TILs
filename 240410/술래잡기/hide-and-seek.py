@@ -78,7 +78,7 @@ def getRouteDirs(kind):
 
     else:
         x=y=0
-        d=0
+        d=1
         visit=[[False]*n for _ in range(n)]
         route.append([x,y])
         visit[x][y]=True
@@ -93,7 +93,7 @@ def getRouteDirs(kind):
             visit[x][y]=True
             route.append([x,y])
             dirs.append(d)
-        dirs.append(2)
+        dirs.append(3)
 
     return [route,dirs]
 
