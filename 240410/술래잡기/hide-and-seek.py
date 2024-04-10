@@ -15,14 +15,9 @@ alive=[True]*m
 a=[[0]*n for _ in range(n)] # 나무 맵. 1 : 나무 존재, 0 : 빈 칸
 b=[[[] for _ in range(n)] for _ in range(n)] # 도망자 맵
 
-dx,dy=None,None
 #   우,하,좌,상
-dx1=[0,1,0,-1]
-dy1=[1,0,-1,0]
-
-#   하,우,상,좌
-dx2=[1,0,-1,0]
-dy2=[0,1,0,-1]
+dx=[0,1,0,-1]
+dy=[1,0,-1,0]
 
 for no in range(m):
     x,y,d=map(int,input().split())
@@ -52,18 +47,9 @@ def inBoard(nx,ny):
         return True
     return False
 
-def changeDirection(kind):
-    if kind==1:
-        dx,dy=dx1,dy1
-    else:
-        dx,dy=dx2,dy2
-    return [dx,dy]
-
 def getRouteDirs(kind):
     route=[]
     dirs=[]
-
-    dx,dy=changeDirection(kind)
 
     if kind==1:
         x=y=n//2
@@ -101,7 +87,7 @@ def getRouteDirs(kind):
             nx=x+dx[d]
             ny=y+dy[d]
             if not inBoard(nx,ny) or visit[nx][ny]:
-                d=(d+1)%4
+                d=(d-1)%4
                 nx,ny=x+dx[d],y+dy[d]
             x,y=nx,ny
             visit[x][y]=True
@@ -113,8 +99,6 @@ def getRouteDirs(kind):
 
 def fleeMove():
     global rs,b
-
-    dx,dy=dx1,dy1 # 우,하,좌,상
 
     for no in range(m):
         if not alive[no] or rs[no] is None:continue
@@ -134,8 +118,6 @@ def fleeMove():
 
 def tagMove():
     global b,alive,ans,inx,tx,ty,td
-
-    dx, dy = changeDirection(kind)
 
     tx,ty=route[inx]
     td=dirs[inx]
