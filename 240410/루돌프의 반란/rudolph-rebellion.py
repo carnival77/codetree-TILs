@@ -173,6 +173,7 @@ def smove():
                 crush(2,no,next_sx,next_sy,mx,my)
             else:
                 a[next_sx][next_sy]=no
+                spos[no]=[next_sx,next_sy]
 
 def check():
     for no in range(1,p+1):
