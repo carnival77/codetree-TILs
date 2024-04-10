@@ -43,7 +43,8 @@ for _ in range(h):
     a[x][y]=1
 
 tx,ty=n//2,n//2
-kind=1
+td=0
+kind=2
 inx=1
 
 def inBoard(nx,ny):
@@ -82,17 +83,18 @@ def getRouteDirs(kind):
                     y+=dy[d]
                     route.append([x,y])
                     # 루프의 마지막 번째 칸에서 방향 바뀜. 하지만 x=y인 칸의 경우 방향 그대로.
-                    if i==loop-1 and x!=y:
-                        dirs.append((d+1)%4)
-                    else:
-                        dirs.append(d)
+                    if i==loop-1:
+                        if x==y and x<n//2 and y<n//2: pass
+                        else:
+                            d = (d + 1) % 4
+                    dirs.append(d)
+        dirs[-1]=1
 
     else:
         x=y=0
         d=0
         visit=[[False]*n for _ in range(n)]
         route.append([x,y])
-        dirs.append(d)
         visit[x][y]=True
 
         for _ in range(n*n-1):
@@ -102,9 +104,10 @@ def getRouteDirs(kind):
                 d=(d+1)%4
                 nx,ny=x+dx[d],y+dy[d]
             x,y=nx,ny
+            visit[x][y]=True
             route.append([x,y])
             dirs.append(d)
-
+        dirs.append(2)
 
     return [route,dirs]
 
@@ -130,13 +133,13 @@ def fleeMove():
                 b[nx][ny].append(no)
 
 def tagMove():
-    global b,alive,ans,inx,tx,ty
+    global b,alive,ans,inx,tx,ty,td
 
     dx, dy = changeDirection(kind)
 
     tx,ty=route[inx]
-    d=dirs[inx]
-    x,y=tx,ty
+    td=dirs[inx]
+    x,y,d=tx,ty,td
     cnt=0
 
     for k in range(3):
