@@ -84,11 +84,17 @@ def tryMove(now,d):
             # 4) 왼쪽으로 이동 시, 위치를 옮긴 기사의 맨 왼쪽 칸(a)보다 다른 기사의 맨 오른쪽 칸(b)이 더 왼쪽
             #    즉, a이 b보다 더 큰 숫자로 더 오른쪽에 위치하는 지 체크
 
-            if r[other] > nr[me] + h[me] - 1 or nr[me]>r[other]+h[other]-1 or c[other]>nc[me]+w[me]-1 or nc[me]>c[other]+w[other]-1:
-                pass
-            else:
+            # 겹치는 경우 - 아래와 반대
+            if r[other] <= nr[me] + h[me] - 1 and nr[me]<=r[other]+h[other]-1 and c[other]<=nc[me]+w[me]-1 and nc[me]<=c[other]+w[other]-1:
                 moved[other]=True
                 q.append(other)
+
+            # # 겹치지 않는 경우
+            # if r[other] > nr[me] + h[me] - 1 or nr[me]>r[other]+h[other]-1 or c[other]>nc[me]+w[me]-1 or nc[me]>c[other]+w[other]-1:
+            #     pass
+            # else:
+            #     moved[other]=True
+            #     q.append(other)
 
     dmg[now]=0
 
