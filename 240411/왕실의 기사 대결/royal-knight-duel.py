@@ -56,14 +56,14 @@ def try_movement(idx, dir):
         for i in range(1, n + 1):
             if is_moved[i] or k[i] <= 0:
                 continue
-            if r[i] > nr[x] + h[x] - 1:
+            if r[i] > nr[x] + h[x] - 1 and nr[x] > r[i] + h[i] - 1 and c[i] > nc[x] + w[x] - 1 and nc[x] > c[i] + w[i] - 1:
                 continue
-            if nr[x] > r[i] + h[i] - 1:
-                continue
-            if c[i] > nc[x] + w[x] - 1:
-                continue
-            if nc[x] > c[i] + w[i] - 1:
-                continue
+            # if nr[x] > r[i] + h[i] - 1:
+            #     continue
+            # if c[i] > nc[x] + w[x] - 1:
+            #     continue
+            # if nc[x] > c[i] + w[i] - 1:
+            #     continue
 
             is_moved[i] = True
             q.append(i)
