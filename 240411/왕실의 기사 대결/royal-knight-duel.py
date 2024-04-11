@@ -50,7 +50,7 @@ def tryMove(now,d):
         nc[me]+=dy[d]
 
         # 이동할 곳이 범위 내인지 체크
-        if not (0<=nr[me]+h[me] and nr[me]<n and 0<=nc[me]+w[me] and nc[me]<n):
+        if not (0<=nr[me] and nr[me]+h[me]<n and 0<=nc[me] and nc[me]+w[me]<n):
             return False
 
         # 이동할 곳에 벽이나 함정이 있는지 체크
