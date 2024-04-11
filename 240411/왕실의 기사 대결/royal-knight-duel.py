@@ -82,8 +82,7 @@ def try_movement(start,d):
             for i in range(x,x+h):
                 for j in range(y,y+w):
                     b[i][j]=no+1
-
-for round in (1,K+1):
+for round in range(1,K+1):
     no,d=map(int,input().split())
 
     # 체스판에서 사라진 기사에게 명령을 내리면 아무런 반응이 없게 됩니다.
