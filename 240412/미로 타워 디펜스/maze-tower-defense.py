@@ -76,7 +76,7 @@ def check():
     cnt=1
     start=tmp[0]
     startInx=0
-    cand=[]
+    cand=dict()
 
     for inx,no in enumerate(tmp):
         if inx==0:continue
@@ -87,24 +87,24 @@ def check():
         else:
             cnt += 1
             if cnt>=4:
-                cand.append([cnt,startInx])
+                cand[startInx]=cnt
+                # cand.append([startInx,cnt])
 
     if len(cand)>0:
-        cand.sort(key=lambda x:-x[0])
-        cnt,startInx=cand[0]
-        return [True,[startInx,cnt]]
+        return [True,cand]
 
     return [False,None]
 
-def delete(target):
+def delete(cand):
     global ans,b
 
-    startInx,cnt=target
-    no=b[startInx]
+    for startInx in cand:
+        cnt=cand[startInx]
+        no=b[startInx]
 
-    for i in range(cnt):
-        b[startInx+i]=0
-    ans+=no*cnt
+        for i in range(cnt):
+            b[startInx+i]=0
+        ans+=no*cnt
 
     tmp=[]
     for no in b:
@@ -144,16 +144,16 @@ for round in range(1,m+1):
     # 삭제 가능한 몬스터 모두 삭제
     ok=False
     while True:
-        canDelete,target=check()
+        canDelete,cand=check()
         if canDelete:
-            delete(target)
+            delete(cand)
             ok=True
-            # move()
+            insert() # b의 몬스터 정보 a에 넣기
         else:
             break
-    # b의 몬스터 정보 a에 넣기
-    if ok:
-        insert()
+    # # b의 몬스터 정보 a에 넣기
+    # if ok:
+    #     insert()
     # 몬스터 복제
     duplicate()
     # b의 몬스터 정보 a에 넣기
