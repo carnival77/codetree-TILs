@@ -105,7 +105,7 @@ def getScore(res):
 
     for i in range(n):
         nx,ny=sx+dx[dir]*i,sy+dy[dir]*i
-        if b[nx][ny]>=5:
+        if inBoard(nx,ny) and b[nx][ny]>=5:
             team_no=b[nx][ny]
             team=teams[team_no]
             ans+=(team.index([nx,ny])+1)**2
