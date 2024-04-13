@@ -6,8 +6,8 @@ n,m,K=map(int,input().split())
 a=[list(map(int,input().split())) for _ in range(n)]
 b=[[0]*n for _ in range(n)]
 
-#  우,하,좌,상
-dx=[0,1,0,-1]
+#  우,상,좌,하
+dx=[0,-1,0,1]
 dy=[1,0,-1,0]
 
 ans=0
