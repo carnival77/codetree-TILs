@@ -64,7 +64,7 @@ def move():
         # 새로 꼬리 삼기
         x,y=team[-1]
         a[x][y]=3
-        b[x][y]=team_no
+        b[x][y]=no
         # 머리 처리
         sx,sy=team[0]
         a[sx][sy]=2
@@ -77,10 +77,10 @@ def move():
                 b[nx][ny]=no
                 break
 
-def throw():
+def throw(round):
 
     dir=(round//n)%4
-    offset=round%4
+    offset=round%n
 
     if dir==0:
         sx=offset
@@ -125,7 +125,7 @@ for round in range(K):
     # 이동
     move()
     # 공 던지기
-    res=throw()
+    res=throw(round)
     # 점수 얻고 팀 조작
     getScore(res)
 
