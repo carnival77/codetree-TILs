@@ -58,8 +58,8 @@ def duplicate():
                 cand=[]
                 for k in range(4):
                     nx,ny=x+dx[k],y+dy[k]
-                    # if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
-                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]==0:
+                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
+                    # if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]==0:
                         cand.append([nx,ny])
                 if len(cand)>0:
                     for tx,ty in cand:
@@ -153,6 +153,6 @@ for year in range(1,m+1):
     if cand is not None:
         kill(cand)
     # 제초제 제거
-    remove()
+    # remove()
 
 print(ans)
