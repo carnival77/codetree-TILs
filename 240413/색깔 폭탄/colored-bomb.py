@@ -121,8 +121,7 @@ def fall():
         cnt=0
         for x in range(n-1):
             for y in range(n):
-                if a[x][y]==-1:continue
-                if a[x+1][y]==0 and a[x][y]!=0:
+                if a[x+1][y]==0 and a[x][y]>=1:
                     a[x+1][y],a[x][y]=a[x][y],a[x+1][y]
                     cnt+=1
 
