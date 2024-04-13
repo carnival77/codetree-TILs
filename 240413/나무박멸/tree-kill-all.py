@@ -96,7 +96,7 @@ def select():
                             point.append([nx,ny])
                 cand.append([cnt,x,y,point])
                 tmp[x][y]=cnt
-                
+
     if len(cand)>0:
         cand.sort(key=lambda x:(-x[0],x[1],x[2]))
         return cand[0]
@@ -115,12 +115,13 @@ def kill(cand):
         a[x][y]=0
         b[x][y]=c+year
 
-# def remove():
-#     global b
-#
-#     for x in range(n):
-#         for y in range(n):
+def remove():
+    global b
 
+    for x in range(n):
+        for y in range(n):
+            if b[x][y]==year:
+                b[x][y]=0
 
 for year in range(1,m+1):
     # 나무 성장
@@ -133,6 +134,6 @@ for year in range(1,m+1):
     if cand is not None:
         kill(cand)
     # 제초제 제거
-    # remove()
+    remove()
 
 print(ans)
