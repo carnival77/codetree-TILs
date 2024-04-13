@@ -3,15 +3,22 @@ from collections import deque
 input=sys.stdin.readline
 
 n,m=map(int,input().split())
-# -2는 빈칸, -1은 해당 칸에 검은색 돌이, 0은 빨간색 폭탄이, 1이상 m이하의 숫자는 빨간색과는 다른 서로 다른 색의 폭탄이 들어가 있음
+# 0은 빈칸, -1은 해당 칸에 검은색 돌이, 6은 빨간색 폭탄이, 1이상 m이하의 숫자는 빨간색과는 다른 서로 다른 색의 폭탄이 들어가 있음
 a=[list(map(int,input().split())) for _ in range(n)]
 ans=0
 round=0
 visit=[]
-redPos=[]
+
 for x in range(n):
     for y in range(n):
         if a[x][y]==0:
+            a[x][y]=6
+
+redPos=[]
+
+for x in range(n):
+    for y in range(n):
+        if a[x][y]==6:
             redPos.append([x,y])
 
 dx=[-1,0,1,0]
@@ -42,7 +49,7 @@ def bfs(sx,sy,no):
             if not inBoard(nx,ny) or visit[nx][ny] or a[nx][ny]==-1:continue
             # 모두 같은 색깔의 폭탄으로만 이루어져 있거나 빨간색 폭탄을 포함하여
             # 정확히 2개의 색깔로만 이루어진 폭탄을 의미합니다.
-            if a[nx][ny]==0 or a[nx][ny]==no:
+            if a[nx][ny]==6 or a[nx][ny]==no:
                 group.append([nx,ny])
                 q.append((nx,ny))
                 total+=1
@@ -101,7 +108,7 @@ def remove(group):
 
     ans+=len(group)**2
     for x,y in group:
-        a[x][y]=-2
+        a[x][y]=0
 
 # 선택된 폭탄 묶음에 해당되는 폭탄들을 전부 제거합니다.
 # 폭탄들이 제거된 이후에는 중력이 작용하여 위에 있던 폭탄들이 떨어지지만,
@@ -115,7 +122,7 @@ def fall():
         for x in range(n-1):
             for y in range(n):
                 if a[x][y]==-1:continue
-                if a[x+1][y]==-2 and a[x][y]!=-2:
+                if a[x+1][y]==0 and a[x][y]!=0:
                     a[x+1][y],a[x][y]=a[x][y],a[x+1][y]
                     cnt+=1
 
