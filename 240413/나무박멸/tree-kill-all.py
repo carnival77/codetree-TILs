@@ -58,7 +58,8 @@ def duplicate():
                 cand=[]
                 for k in range(4):
                     nx,ny=x+dx[k],y+dy[k]
-                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
+                    # if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
+                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]==0:
                         cand.append([nx,ny])
                 if len(cand)>0:
                     for tx,ty in cand:
@@ -75,31 +76,34 @@ def duplicate():
 # 만약 행이 같은 경우에는 열이 작은 칸에 제초제를 뿌리게 됩니다.
 def select():
 
+    sx,sy=-1,-1
     tmp=[[0]*n for _ in range(n)]
     cand=[]
     for x in range(n):
         for y in range(n):
             if a[x][y]>0:
                 cnt=a[x][y]
-                point=[]
-                point.append([x,y])
+                # point=[]
+                # point.append([x,y])
                 for k in range(4):
                     for i in range(1,t+1):
                         nx,ny=x+dx1[k]*i,y+dy1[k]*i
                         if not inBoard(nx,ny):
                             break
                         if a[nx][ny]<=0:
-                            point.append([nx,ny])
+                            # point.append([nx,ny])
                             break
                         if a[nx][ny]>0:
                             cnt+=a[nx][ny]
-                            point.append([nx,ny])
-                cand.append([cnt,x,y,point])
+                            # point.append([nx,ny])
+                # cand.append([cnt,x,y,point])
+                cand.append([cnt,x,y])
                 tmp[x][y]=cnt
 
     if len(cand)>0:
         cand.sort(key=lambda x:(-x[0],x[1],x[2]))
-        return cand[0]
+        sx,sy=cand[0][1],cand[0][2]
+        return [sx,sy]
     else:
         return None
 
@@ -108,32 +112,60 @@ def select():
 def kill(cand):
     global a,b,ans
 
-    cnt,sx,sy,point=cand
+    # cnt,sx,sy,point=cand
+    sx,sy=cand
 
-    ans+=cnt
-    for x,y in point:
+    if (sx,sy)!=(-1,-1):
+        x,y=sx,sy
+        b[x][y]=c
+        if a[x][y]==0:
+            return
+        ans+=a[x][y]
         a[x][y]=0
-        b[x][y]=c+year
+        for k in range(4):
+            for i in range(1,t+1):
+                nx, ny = x + dx1[k] * i, y + dy1[k] * i
+                if not inBoard(nx, ny):
+                    break
+                b[nx][ny]=c
+                if a[nx][ny] <= 0:
+                    break
+                else:
+                    ans+=a[nx][ny]
+                    a[nx][ny]=0
 
-def remove():
+    # for x,y in point:
+    #     a[x][y]=0
+    #     b[x][y]=c
+
+def decrease():
     global b
 
     for x in range(n):
         for y in range(n):
-            if b[x][y]==year:
-                b[x][y]=0
+            if b[x][y]>0:
+                b[x][y]-=1
 
-for year in range(1,m+1):
+# def remove():
+#     global b
+#
+#     for x in range(n):
+#         for y in range(n):
+#             if b[x][y]==year:
+#                 b[x][y]=0
+
+for year in range(m):
     # 나무 성장
     grow()
     # 나무 번식
     duplicate()
     # 제초제 뿌릴 칸 선정
     cand=select()
+    # 제초제 제거
+    if year>=1:
+        decrease()
     # 제초제 뿌리기
     if cand is not None:
         kill(cand)
-    # 제초제 제거
-    remove()
 
 print(ans)
