@@ -54,7 +54,7 @@ def bfs(sx,sy,no):
                 q.append((nx,ny))
                 total+=1
                 visit[nx][ny]=True
-                if a[nx][ny]==0:
+                if a[nx][ny]==6:
                     red+=1
                 if a[nx][ny]==no:
                     cand.append([nx,ny])
