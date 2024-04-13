@@ -96,8 +96,12 @@ def select():
                             point.append([nx,ny])
                 cand.append([cnt,x,y,point])
                 tmp[x][y]=cnt
-    cand.sort(key=lambda x:(-x[0],x[1],x[2]))
-    return cand[0]
+                
+    if len(cand)>0:
+        cand.sort(key=lambda x:(-x[0],x[1],x[2]))
+        return cand[0]
+    else:
+        return None
 
 # 제초제가 뿌려진 칸에는 c년만큼 제초제가 남아있다가 c+1년째가 될 때 사라지게 됩니다.
 # 제초제가 뿌려진 곳에 다시 제초제가 뿌려지는 경우에는 새로 뿌려진 해로부터 다시 c년동안 제초제가 유지됩니다.
@@ -126,7 +130,8 @@ for year in range(1,m+1):
     # 제초제 뿌릴 칸 선정
     cand=select()
     # 제초제 뿌리기
-    kill(cand)
+    if cand is not None:
+        kill(cand)
     # 제초제 제거
     # remove()
 
