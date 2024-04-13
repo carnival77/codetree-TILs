@@ -76,7 +76,6 @@ def duplicate():
 # 만약 행이 같은 경우에는 열이 작은 칸에 제초제를 뿌리게 됩니다.
 def select():
 
-    sx,sy=-1,-1
     tmp=[[0]*n for _ in range(n)]
     cand=[]
     for x in range(n):
