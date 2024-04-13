@@ -39,7 +39,7 @@ def bfs(sx,sy,no):
     group.append([sx,sy])
     cand=[] # 기준점 후보
     cand.append([sx,sy])
-    total=1
+    cnt=1
     red=0
 
     while q:
@@ -52,19 +52,19 @@ def bfs(sx,sy,no):
             if a[nx][ny]==6 or a[nx][ny]==no:
                 group.append([nx,ny])
                 q.append((nx,ny))
-                total+=1
                 visit[nx][ny]=True
                 if a[nx][ny]==6:
                     red+=1
                 if a[nx][ny]==no:
+                    cnt+=1
                     cand.append([nx,ny])
-
+    total=cnt+red
     # 여기서 기준점이란, 해당 폭탄 묶음을 이루고 있는 폭탄들 중 빨간색이 아니면서 행이 가장 큰 칸을 의미하며,
     # 만약 행이 가장 큰 폭탄이 여러 개라면 그 중 열이 가장 작은 칸을 의미합니다.
     cand.sort(key=lambda x:(-x[0],x[1]))
     tx,ty=cand[0] # 기준점 위치
 
-    return [total,red,tx,ty,group]
+    return [total,red,tx,ty,group,cnt]
 
 def restoreRed(visit):
 
@@ -87,8 +87,8 @@ def find():
         for x in range(n):
             for y in range(n):
                 if a[x][y]==no and not visit[x][y]:
-                    total,red,tx,ty,group=bfs(x,y,no)
-                    if total>=2:
+                    total,red,tx,ty,group,cnt=bfs(x,y,no)
+                    if total>=2 and cnt>=1:
                         cand.append([total,red,tx,ty,group])
                     visit=restoreRed(visit)
     # 크기가 가장 큰 폭탄 묶음이라는 것은, 가장 많은 수의 폭탄들로 이루어진 폭탄 묶음을 의미합니다.
