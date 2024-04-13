@@ -112,26 +112,43 @@ def kill(cand):
     global a,b,ans
 
     # cnt,sx,sy,point=cand
-    sx,sy=cand
+    x,y=cand
+    
+    b[x][y]=c
+    # if a[x][y]==0:
+    #     return
+    ans+=a[x][y]
+    a[x][y]=0
+    for k in range(4):
+        for i in range(1,t+1):
+            nx, ny = x + dx1[k] * i, y + dy1[k] * i
+            if not inBoard(nx, ny):
+                break
+            b[nx][ny]=c
+            if a[nx][ny] <= 0:
+                break
+            else:
+                ans+=a[nx][ny]
+                a[nx][ny]=0
 
-    if (sx,sy)!=(-1,-1):
-        x,y=sx,sy
-        b[x][y]=c
-        if a[x][y]==0:
-            return
-        ans+=a[x][y]
-        a[x][y]=0
-        for k in range(4):
-            for i in range(1,t+1):
-                nx, ny = x + dx1[k] * i, y + dy1[k] * i
-                if not inBoard(nx, ny):
-                    break
-                b[nx][ny]=c
-                if a[nx][ny] <= 0:
-                    break
-                else:
-                    ans+=a[nx][ny]
-                    a[nx][ny]=0
+    # if (sx,sy)!=(-1,-1):
+    #     x,y=sx,sy
+    #     b[x][y]=c
+    #     if a[x][y]==0:
+    #         return
+    #     ans+=a[x][y]
+    #     a[x][y]=0
+    #     for k in range(4):
+    #         for i in range(1,t+1):
+    #             nx, ny = x + dx1[k] * i, y + dy1[k] * i
+    #             if not inBoard(nx, ny):
+    #                 break
+    #             b[nx][ny]=c
+    #             if a[nx][ny] <= 0:
+    #                 break
+    #             else:
+    #                 ans+=a[nx][ny]
+    #                 a[nx][ny]=0
 
     # for x,y in point:
     #     a[x][y]=0
