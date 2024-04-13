@@ -64,10 +64,10 @@ def move():
         # 새로 꼬리 삼기
         x,y=team[-1]
         a[x][y]=3
+        b[x][y]=team_no
         # 머리 처리
         sx,sy=team[0]
         a[sx][sy]=2
-        b[sx][sy]=no
         for k in range(4):
             nx,ny=sx+dx[k],sy+dy[k]
             if not inBoard(nx,ny):continue
@@ -76,7 +76,6 @@ def move():
                 a[nx][ny]=1
                 b[nx][ny]=no
                 break
-        teams[no]=team
 
 def throw():
 
