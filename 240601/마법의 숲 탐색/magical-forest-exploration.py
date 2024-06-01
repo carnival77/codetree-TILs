@@ -113,26 +113,33 @@ def bfs(sx,sy,no):
     q.append((sx,sy))
     visit=[[False]*m for _ in range(n)]
     visit[sx][sy]=True
+    # visit_no=set()
+    # visit_no.add(no)
 
     while q:
         x,y=q.popleft()
         for k in range(4):
             nx,ny=x+dx[k],y+dy[k]
-            if not inBoard(nx,ny) or visit[nx][ny]:
+            if not inBoard(nx,ny) or visit[nx][ny] or a[nx][ny]==0:
                 continue
-            if a[nx][ny]==no or a[nx][ny]==-no:
+            if a[x][y]==abs(a[nx][ny]) or (a[x][y]<0 and a[nx][ny]!=abs(a[x][y])):
+            # if a[nx][ny]==no or a[nx][ny]==-no:
+            # if a[nx][ny] in visit_no or -a[nx][ny] in visit_no:
                 q.append((nx,ny))
                 visit[nx][ny]=True
                 cand.append(nx)
-                continue
-            if a[x][y]==-no and a[nx][ny]!=0 and a[nx][ny]!=no:
-                q.append((nx,ny))
-                visit[nx][ny]=True
-                cand.append(nx)
-                no=abs(a[nx][ny])
+                # continue
+            # if a[x][y]==-no and a[nx][ny]!=0 and a[nx][ny]!=no and a[nx][ny] not in visit_no:
+            # if a[x][y]<0 and a[nx][ny]!=0 and a[nx][ny]!=abs(a[x][y]):
+            #     q.append((nx,ny))
+            #     visit[nx][ny]=True
+            #     cand.append(nx)
+                # no=abs(a[nx][ny])
+                # visit_no.add(no)
 
     cand.sort(reverse=True)
-    return cand[0]+1
+    point=cand[0]+1
+    return point
 
 for no in range(1,K+1):
     c,d=map(int,input().split())
