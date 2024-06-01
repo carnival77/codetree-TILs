@@ -20,20 +20,35 @@ def getExit(x,y,d):
 
 
 def inBoard(nx,ny):
-    # if 0<=nx<n and 0<=ny<m:
-    if nx<n and 0<=ny<m:
+    if 0<=nx<n and 0<=ny<m:
+    # if nx<n and 0<=ny<m:
         return True
     return False
 
 def check(x,y):
+    if not inBoard(x,y):
+        if x<n and 0<=y<m:
+            return True
+    else:
+        if a[x][y]==0:
+            return True
+    return False
     # if inBoard(x,y) or a[x][y]==0:
     #     return True
     # return False
-    if not inBoard(x,y):
-        return False
-    if (0<=x<n and 0<=y<m) and a[x][y]!=0:
-        return False
-    return True
+
+    # if not (0<=y<m):
+    #     return False
+    # if 0<=x<n:
+    #     if a[x][y]!=0:
+    #         return False
+    # return True
+
+    # if not inBoard(x,y):
+    #     return False
+    # if (0<=x<n and 0<=y<m) and a[x][y]!=0:
+    #     return False
+    # return True
 
 # 골렘 이동
 def move(c,d,no):
@@ -74,13 +89,20 @@ def move(c,d,no):
 
     # 골렘 지도에 표시
     # if a[x][y]==0 and a[x+1][y]==0 and a[x-1][y]==0 and a[x][y+1]==0 and a[x][y-1]==0:
-    if check(x,y) and check(x+1,y) and check(x-1,y) and check(x,y+1) and check(x,y-1):
+    # if check(x,y) and check(x+1,y) and check(x-1,y) and check(x,y+1) and check(x,y-1):
+    #     a[x][y]=a[x+1][y]=a[x-1][y]=a[x][y+1]=a[x][y-1]=no
+    #     ex, ey = getExit(x, y, d)# 출구 위치
+    #     a[ex][ey]=-no
+    #     return [True,x,y]
+    # else:
+    #     return [False,-1,-1]
+    if not inBoard(x, y) or not inBoard(x + 1, y) or not inBoard(x-1,y) or not inBoard(x,y+1) or not inBoard(x,y-1):
+        return [False, -1, -1]
+    else:
         a[x][y]=a[x+1][y]=a[x-1][y]=a[x][y+1]=a[x][y-1]=no
         ex, ey = getExit(x, y, d)# 출구 위치
         a[ex][ey]=-no
         return [True,x,y]
-    else:
-        return [False,-1,-1]
 
 # 정령 이동
 def bfs(sx,sy,no):
