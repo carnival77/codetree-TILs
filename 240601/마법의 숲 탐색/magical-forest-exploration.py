@@ -26,9 +26,12 @@ def inBoard(nx,ny):
     return False
 
 def check(x,y):
+    # if inBoard(x,y) or a[x][y]==0:
+    #     return True
+    # return False
     if not inBoard(x,y):
         return False
-    if a[x][y]!=0:
+    if (0<=x<n and 0<=y<m) and a[x][y]!=0:
         return False
     return True
 
@@ -48,12 +51,24 @@ def move(c,d,no):
             x+=1
             y-=1
             d=(d-1)%4
+        # elif check(x+1,y-1) and check(x-1,y-1) and check(x,y-2):
+        #     # x+=1
+        #     y-=1
+        #     d=(d-1)%4
+        #     if check(x+2,y) and check(x+1,y-1):
+        #         x+=1
         # 골렘 오른쪽 이동
         # elif a[x+1][y+1]==0 and a[x-1][y+1]==0 and a[x][y+2]==0 and a[x+1][y+2]==0 and a[x+2][y+1]==0:
         elif check(x+1,y+1) and check(x-1,y+1) and check(x,y+2) and check(x+1,y+2) and check(x+2,y+1):
             x+=1
             y+=1
             d=(d+1)%4
+        # elif check(x+1,y+1) and check(x-1,y+1) and check(x,y+2):
+        #     # x+=1
+        #     y+=1
+        #     d=(d+1)%4
+        #     if check(x+1,y+2) and check(x+2,y+1):
+        #         x+=1
         else:
             break
 
