@@ -122,7 +122,7 @@ def bfs(sx,sy,no):
             nx,ny=x+dx[k],y+dy[k]
             if not inBoard(nx,ny) or visit[nx][ny] or a[nx][ny]==0:
                 continue
-            if abs(a[x][y])==abs(a[nx][ny]) or (a[x][y]<0 and a[nx][ny]!=abs(a[x][y])):
+            if abs(a[x][y])==abs(a[nx][ny]) or (a[x][y]<0 and abs(a[nx][ny])!=abs(a[x][y])):
             # if a[nx][ny]==no or a[nx][ny]==-no:
             # if a[nx][ny] in visit_no or -a[nx][ny] in visit_no:
                 q.append((nx,ny))
