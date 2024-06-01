@@ -87,11 +87,12 @@ def bfs(sx,sy,no):
                 q.append((nx,ny))
                 visit[nx][ny]=True
                 cand.append(nx)
+                continue
             if a[x][y]==-no and a[nx][ny]!=0 and a[nx][ny]!=no:
                 q.append((nx,ny))
                 visit[nx][ny]=True
                 cand.append(nx)
-                no=a[nx][ny]
+                no=abs(a[nx][ny])
 
     cand.sort(reverse=True)
     return cand[0]+1
