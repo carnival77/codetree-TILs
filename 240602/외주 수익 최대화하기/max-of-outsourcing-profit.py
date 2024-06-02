@@ -11,7 +11,10 @@ ans=0
 def dfs(inx,s):
     global ans
 
-    if inx>=n:
+    if inx>n:
+        return
+
+    if inx==n:
         ans=max(ans,s)
         return
 
