@@ -1,15 +1,23 @@
 n=int(input())
 
-data=[]
+day,point=[],[]
 for _ in range(n):
     t,p=map(int,input().split())
-    data.append([t,p])
+    day.append(t)
+    point.append(p)
 
-dp=[0]*(n+1)
+ans=0
 
-for i in range(n):
-    t,p=data[i]
-    # t-=1
-    dp[i+t]=max(dp[i]+p,dp[i+t])
+def dfs(inx,s):
+    global ans
 
-print(dp[n])
+    if inx>=n:
+        ans=max(ans,s)
+        return
+
+    dfs(inx+day[inx],s+point[inx])
+    dfs(inx+1,s)
+
+dfs(0,0)
+
+print(ans)
