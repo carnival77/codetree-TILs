@@ -1,93 +1,135 @@
-import sys
-from copy import deepcopy
-from itertools import combinations
-
-input=sys.stdin.readline
-MAX=int(1e9)
-
-n,m,h=map(int,input().split())
-
-a=[[0]*(n+1) for _ in range(h+2)]
-
-ans=MAX
-
-for _ in range(m):
-    x,y=map(int,input().split())
-    a[x][y]=1
-    a[x][y+1]=2
-
-# 가로선 넣을 자리 후보 뽑기
-cand=[]
-for x in range(1,h+1):
-    for y in range(1,n):
-        if 1<=a[x][y]<=2 or 1<=a[x][y+1]<=2:
-            continue
-        cand.append([x,y])
-
-def check(a):
-    result=True
-
-    # i열이 i가 나오는 지 검사
-    for y in range(1,n+1):
-        col=y
-        # 아래로 내려가며 탐색
-        for x in range(1,h+1):
-            # 1인 경우 오른쪽
-            if a[x][y]==1:
-                y+=1
-            # 2인 경우 왼쪽
-            elif a[x][y]==2:
-                y-=1
-        if y!=col:
-            result=False
-            break
-
-    return result
-
-if check(a):
-    print(0)
-    sys.exit(0)
-
-for num in range(1,4):
-    for comb in combinations(cand,num):
-        for x,y in comb:
-            a[x][y]=1
-            a[x][y+1]=2
-        if check(a):
-            print(num)
-            sys.exit(0)
-        for x, y in comb:
-            a[x][y]=0
-            a[x][y+1]=0
-
-
-# def dfs(a,res):
-#     global ans
+# solution 1. 미리 조합 경우의 수를 다 뽑기
+# import sys
+# from itertools import combinations
 #
-#     if res>3:
-#         return
+# n,m,h=map(int,input().split())
+# H=h+2
+# N=n+2
+# a=[[0]*N for _ in range(H)]
+# ans=int(1e9)
 #
-#     # i번 세로선 결과가 i번이면 종료
-#     if check(a):
-#         ans=min(ans,res)
-#         return
-
-    # 가로선 넣어보기
-    # for x in range(1,h+1):
-    #     for y in range(1,n):
-    #         if 1<=a[x][y]<=2 or 1<=a[x][y+1]<=2:
-    #             continue
-    #         a[x][y]=1
-    #         a[x][y+1]=2
-    #         dfs(deepcopy(a),res+1)
-    #         a[x][y]=0
-    #         a[x][y+1]=0
-
-# dfs(a,0)
-
-# if ans==MAX:
+# for x in range(H):
+#     a[x][0]=-1
+#     a[x][N-1]=-1
+#
+# # 초기 메모리 유실선 표시
+# for _ in range(m):
+#     x,y=map(int,input().split())
+#     a[x][y]=1
+#
+# cand=[] # 가로선 설치 위치 후보
+# for x in range(1,H-1):
+#     for y in range(1,N-2):
+#         if a[x][y]==0:
+#             if a[x][y-1]==1 or a[x][y+1]==1:
+#                 continue
+#             else:
+#                 cand.append([x,y])
+#
+# # 가로선 설치 후보 중 3개를 선택하여 만드는 모든 조합의 경우의 수
+# comb=[]
+# for event in combinations(cand,3):
+#     comb.append(event)
+#
+# def copyBoard(a):
+#     return [row[:] for row in a]
+#
+# # 열 번호 그대로 내려오는지 확인
+# def process(b):
+#     for sy in range(1, N - 1):
+#         x = 0
+#         y = sy
+#         while x < H:
+#             if b[x][y] == 1:
+#                 y += 1
+#             elif b[x][y - 1] == 1:
+#                 y -= 1
+#             x += 1
+#         if y != sy:
+#             return False
+#     return True
+#
+# # 초기에 유실선 없으면 그대로
+# if process(a):
+#     print(0)
+#     sys.exit(0)
+#
+# # 가로선 설치 후보 중 3개를 선택하여 만들어진 각 조합의 경우의 수에서
+# for event in comb:
+#     b=copyBoard(a)
+#     # 1,2,3개 각 설치 시
+#     cnt = 1
+#     for px,py in event:
+#         b[px][py]=1
+#         ok=process(b)
+#         if ok:
+#             ans=min(ans,cnt)
+#             break
+#         cnt+=1
+# if ans>3:
 #     print(-1)
 # else:
 #     print(ans)
 
+import sys
+from itertools import combinations
+
+n,m,h=map(int,input().split())
+H=h+2
+N=n+2
+a=[[0]*N for _ in range(H)]
+ans=int(1e9)
+
+for x in range(H):
+    a[x][0]=-1
+    a[x][N-1]=-1
+
+# 초기 메모리 유실선 표시
+for _ in range(m):
+    x,y=map(int,input().split())
+    a[x][y]=1
+
+cand=[] # 가로선 설치 위치 후보
+for x in range(1,H-1):
+    for y in range(1,N-2):
+        if a[x][y]==0:
+            if a[x][y-1]==1 or a[x][y+1]==1:
+                continue
+            else:
+                cand.append([x,y])
+
+def copyBoard(a):
+    return [row[:] for row in a]
+
+# 열 번호 그대로 내려오는지 확인
+def process(b):
+    for sy in range(1, N - 1):
+        x = 0
+        y = sy
+        while x < H:
+            if b[x][y] == 1:
+                y += 1
+            elif b[x][y - 1] == 1:
+                y -= 1
+            x += 1
+        if y != sy:
+            return False
+    return True
+
+# 초기에 유실선 없으면 그대로
+if process(a):
+    print(0)
+    sys.exit(0)
+
+# 가로선 설치 후보 중 3개를 선택하여 만들어진 각 조합의 경우의 수에서
+for num in range(1,4):
+    for event in combinations(cand,num):
+        b=copyBoard(a)
+        # 1,2,3개 각 설치 시
+        for px,py in event:
+            b[px][py]=1
+            ok=process(b)
+            if ok:
+                print(num)
+                sys.exit(0)
 print(-1)
