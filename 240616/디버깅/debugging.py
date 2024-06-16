@@ -1,3 +1,4 @@
+import sys
 from itertools import combinations
 
 n,m,h=map(int,input().split())
@@ -32,27 +33,48 @@ for event in combinations(cand,3):
 def copyBoard(a):
     return [row[:] for row in a]
 
+# 열 번호 그대로 내려오는지 확인
+def process(b):
+    for sy in range(1, N - 1):
+        x = 0
+        y = sy
+        while x < H:
+            if b[x][y] == 1:
+                y += 1
+            elif b[x][y - 1] == 1:
+                y -= 1
+            x += 1
+        if y != sy:
+            return False
+    return True
+
+# 초기에 유실선 없으면 그대로
+if process(a):
+    print(0)
+    sys.exit(0)
+
 # 가로선 설치 후보 중 3개를 선택하여 만들어진 각 조합의 경우의 수에서
 for event in comb:
     b=copyBoard(a)
     # 1,2,3개 각 설치 시
     cnt = 1
     for px,py in event:
-        ok=True
+        # ok=True
         b[px][py]=1
-        # 열 번호 그대로 내려오는지 확인
-        for sy in range(1,N-1):
-            x=0
-            y=sy
-            while x<H:
-                if b[x][y]==1:
-                    y+=1
-                elif b[x][y-1]==1:
-                    y-=1
-                x+=1
-            if y!=sy:
-                ok=False
-                break
+        ok=process(b)
+        # # 열 번호 그대로 내려오는지 확인
+        # for sy in range(1,N-1):
+        #     x=0
+        #     y=sy
+        #     while x<H:
+        #         if b[x][y]==1:
+        #             y+=1
+        #         elif b[x][y-1]==1:
+        #             y-=1
+        #         x+=1
+        #     if y!=sy:
+        #         ok=False
+        #         break
         if ok:
             ans=min(ans,cnt)
             break
