@@ -1,78 +1,63 @@
-from collections import deque
 from itertools import combinations
 
-n,m=map(int,input().split())
-a=[list(map(int,input().split())) for _ in range(n)] # 0 : 빈칸, 1 : 사람, 2 : 병원
-# b=[[0]*n for _ in range(n)]
-ans=1000
+n,m = map(int,input().split())
 
-# dx=[-1,0,1,0]
-# dy=[0,-1,0,1]
+board=[]
 
-# 사람,병원 위치 찾기
-p,h=[],[]
-for x in range(n):
-    for y in range(n):
-        if a[x][y]==2:
-            h.append([x+1,y+1])
-        elif a[x][y]==1:
-            p.append([x+1,y+1])
-            # b[x][y]=1
+for _ in range(n):
+    board.append(list(map(int,input().split())))
 
-# def inBoard(nx,ny):
-#     if 0<=nx<n and 0<=ny<n:
-#         return True
-#     return False
+houses=[]
+chickens=[]
 
-# def bfs(sx,sy):
-#     q=deque()
-#     q.append((sx,sy))
-#     d=[[-1]*n for _ in range(n)]
-#     d[sx][sy]=0
-#     cand=[]
+for i in range(n):
+    for j in range(n):
+        if board[i][j] == 1:
+            houses.append((i+1,j+1))
+        elif board[i][j] == 2:
+            chickens.append((i+1,j+1))
+
+# 치킨집들 중에 m개 고르는 모든 경우의 수
+chicken_comb = list(combinations(chickens,m))
+
+# 도시의 치킨 거리 = 모든 집의 치킨 거리 합
+# 각 집의 치킨 거리 = min(각 집 위치 부터 m개의 치킨집 중 각 치킨집까지의 거리)
+def get_sum(m_chicken):
+    sum=0
+    for house in houses:
+        x,y = house
+        each_cd = 1000
+        for chicken in m_chicken:
+            a,b=chicken
+            dist = abs(x - a) + abs(y - b)
+            each_cd = min(each_cd, dist)
+        sum += each_cd
+    return sum
+
+answer=1000
+
+# m개 치킨집들의 각 경우
+for m_chicken in chicken_comb:
+    # 도시의 치킨 거리의 최솟값
+    answer = min(answer,get_sum(m_chicken))
+
+print(answer)
+
+# print(chicken_comb)
+# sum=0
 #
-#     while q:
-#         x,y=q.popleft()
-#         for k in range(4):
-#             nx,ny=x+dx[k],y+dy[k]
-#             if not inBoard(nx,ny) or d[nx][ny]!=-1:
-#                 continue
-#             q.append((nx,ny))
-#             d[nx][ny]=d[x][y]+1
-#             if b[nx][ny]==2:
-#                 return d[nx][ny]
-#                 # cand.append(d[nx][ny])
-#     # cand.sort()
-#     # return cand[0]
-
-# 병원들 중 m개 뽑는 경우의 수
-
-
-
-# for comb in combinations(h,m):
-#     res=0
-#     # 병원 설치
-#     # for x,y in comb:
-#     #     b[x][y]=2
-#     # 각 사람 위치에서 bfs 로 제일 가까운 병원까지의 거리 탐색
-#     for x,y in p:
-#         # dist=bfs(x,y)
-#         # res+=dist
-#         res=getDist(x,y)
-#     # 병원 해체
-#     # for x,y in comb:
-#     #     b[x][y]=0
-#     # 최솟값 갱신
-#     ans=min(ans,res)
-
-for comb in combinations(h,m):
-    s=0
-    for px,py in p:
-        dist = 1000
-        for hx,hy in comb:
-            d=abs(px-hx)+abs(py-hy)
-            dist=min(dist,d)
-        s+=dist
-    ans=min(ans,s)
-
-print(ans)
+# for house in houses:
+#     x,y = house
+#     each_cd = 1000
+#     for m_chicken in chicken_comb:
+#         print("m_chicken : ",m_chicken)
+#         for chicken in m_chicken:
+#             print("chicken : " ,chicken)
+#             a,b = chicken
+#             dist = abs(x-a) + abs(y-b)
+#             print("dist :",dist)
+#             each_cd = min(each_cd,dist)
+#             print("each_cd : ",each_cd)
+#     sum += each_cd
+#
+# print(sum)
