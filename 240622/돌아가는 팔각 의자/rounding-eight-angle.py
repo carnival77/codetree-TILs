@@ -10,27 +10,25 @@ for _ in range(MAX):
         q.append(int(ele))
     a.append(q)
 
-def process(n,d):
+def process(n,dir):
 
     # n번째로부터 왼쪽, 오른쪽으로 회전 대상 탐색
-    cand=[None]+[0]*MAX # 의자마다 회전할 방향 저장
-    cand[n]=d
-    nd=d
+    d=[None]+[0]*MAX # 의자마다 회전할 방향 저장
+    d[n]=dir
     # 왼쪽 순서대로 탐색
     for i in range(n,1,-1):
         if a[i][6]!=a[i-1][2]:
-            nd=-nd
-            cand[i-1]=nd
-    nd=d
+            d[i-1]=-d[i]
     # 오른쪽 순서대로 탐색
     for i in range(n,MAX):
         if a[i][2]!=a[i+1][6]:
-            nd=-nd
-            cand[i+1]=nd
+            d[i+1]=-d[i]
 
     for i in range(1,MAX+1):
-        d=cand[i]
-        a[i].rotate(d)
+        dir=d[i]
+        if dir==0:
+            continue
+        a[i].rotate(dir)
 
 K=int(input())
 for _ in range(K):
