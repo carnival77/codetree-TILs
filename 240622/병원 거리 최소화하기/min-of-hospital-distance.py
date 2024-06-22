@@ -40,9 +40,10 @@ def bfs(sx,sy):
             q.append((nx,ny))
             d[nx][ny]=d[x][y]+1
             if b[nx][ny]==2:
-                cand.append(d[nx][ny])
-    cand.sort()
-    return cand[0]
+                return d[nx][ny]
+                # cand.append(d[nx][ny])
+    # cand.sort()
+    # return cand[0]
 
 # 병원들 중 m개 뽑는 경우의 수
 for comb in combinations(h,m):
