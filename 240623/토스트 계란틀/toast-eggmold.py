@@ -55,8 +55,8 @@ def check():
 for round in range(1,MAX+1):
     # 라운드별 변수 초기화
     g_no=1
-    group_cnt=[0]*251
-    group_sum=[0]*251
+    group_cnt=[0]*2501
+    group_sum=[0]*2501
     group=[[0]*n for _ in range(n)]
     visit = [[False] * n for _ in range(n)]
     ok=False
