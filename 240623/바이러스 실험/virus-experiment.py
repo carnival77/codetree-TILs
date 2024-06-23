@@ -19,51 +19,66 @@ for _ in range(m):
     b[x-1][y-1].append(age)
 
 for round in range(1,K+1):
-    dead=[[0]*n for _ in range(n)]
 
     flag=0
 
-    # 1
+    p=[[0]*n for _ in range(n)]
     for x in range(n):
         for y in range(n):
-            if len(b[x][y])>0:
-                b[x][y].sort()
-                for inx,age in enumerate(b[x][y]):
-                    if a[x][y]>=age:
-                        a[x][y]-=age
-                        b[x][y][inx]+=1
-                    else:
-                        dead[x][y]+=age//2
-                        b[x][y].remove(age)
-
-    flag=1
-
-    # 2
-    for x in range(n):
-        for y in range(n):
-            a[x][y]+=dead[x][y]
-
-    flag=2
-
-    # 3
-    for x in range(n):
-        for y in range(n):
-            if len(b[x][y])>0:
-                for age in b[x][y]:
-                    if age%5==0:
+            live=[]
+            dead=0
+            b[x][y].sort()
+            for inx,age in enumerate(b[x][y]):
+                if a[x][y]>=age:
+                    a[x][y]-=age
+                    live.append(age+1)
+                    if (age+1)%5==0:
                         for k in range(8):
-                            nx,ny=x+dx[k],y+dy[k]
-                            if not inBoard(nx,ny):continue
-                            b[nx][ny].append(1)
-
-    flag=3
-
-    # 4
-    for x in range(n):
-        for y in range(n):
+                            nx, ny = x + dx[k], y + dy[k]
+                            if not inBoard(nx, ny): continue
+                            p[nx][ny]+=1
+                else:
+                    dead+=age//2
+            a[x][y]+=dead
+            b[x][y]=live
             a[x][y]+=c[x][y]
 
-    flag=4
+    for x in range(n):
+        for y in range(n):
+            for _ in range(p[x][y]):
+                b[x][y].append(1)
+
+    # flag=1
+    #
+    # # 2
+    # for x in range(n):
+    #     for y in range(n):
+    #         if len(dead[x][y])>0:
+    #             for age in dead[x][y]:
+    #                 a[x][y]+=age//2
+    #                 b[x][y].remove(age)
+    #
+    # flag=2
+    #
+    # # 3
+    # for x in range(n):
+    #     for y in range(n):
+    #         if len(b[x][y])>0:
+    #             for age in b[x][y]:
+    #                 if age%5==0 and age>0:
+    #                     for k in range(8):
+    #                         nx,ny=x+dx[k],y+dy[k]
+    #                         if not inBoard(nx,ny):continue
+    #                         b[nx][ny].append(1)
+    #
+    # flag=3
+    #
+    # # 4
+    # for x in range(n):
+    #     for y in range(n):
+    #         a[x][y]+=c[x][y]
+    #
+    # flag=4
 
 for x in range(n):
     for y in range(n):
