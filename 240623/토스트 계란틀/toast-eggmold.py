@@ -66,11 +66,18 @@ for round in range(1,MAX+1):
     if not ok:
         break
     # 이동하여 하나로 합치고 다시 분리
-    for no in range(1,g_no):
-        for x in range(n):
-            for y in range(n):
-                if group[x][y]==no and group_cnt[no]>=2:
-                    a[x][y]=group_sum[no]//group_cnt[no]
+    for x in range(n):
+        for y in range(n):
+            no=group[x][y]
+            if group_cnt[no]>=2:
+                a[x][y]=group_sum[no]//group_cnt[no]
+
+
+    # for no in range(1,g_no):
+    #     for x in range(n):
+    #         for y in range(n):
+    #             if group[x][y]==no and group_cnt[no]>=2:
+    #                 a[x][y]=group_sum[no]//group_cnt[no]
 
     ans+=1
 
