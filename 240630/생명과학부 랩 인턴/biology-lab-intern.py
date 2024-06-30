@@ -27,6 +27,8 @@ def get(y):
     for x in range(n):
         if a[x][y]!=0:
             no=a[x][y]
+            if molds[no]==None:
+                continue
             mold=molds[no]
             ans += mold.b
             a[x][y]=0
