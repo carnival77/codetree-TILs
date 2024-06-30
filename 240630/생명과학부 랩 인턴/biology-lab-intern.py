@@ -1,40 +1,91 @@
-n, m, K = map(int, input().split())
-a = [[0]*m for _ in range(n)]
-molds=[None]*(K+1)
+import sys
+input=sys.stdin.readline
 
-class Mold:
-    def __init__(self,no,x,y,b,s,d):
+class Shark:
+    def __init__(self,no,x,y,s,d,size):
         self.no=no
         self.x=x
         self.y=y
-        self.b=b
         self.s=s
         self.d=d
+        self.size=size
+        
+#  상,하,우,좌
+dx=[-1,1,0,0]
+dy=[0,0,1,-1]
 
-for no in range(1,K+1):
-    x, y, s, d, b = map(int, input().split())
-    x -= 1
-    y -= 1
-    mold=Mold(no,x,y,b,s,d)
-    a[x][y]=no
-    molds[no]=mold
+n,m,l=map(int,input().split())
+a=[[0]*m for _ in range(n)]
+ans=0
+sharks=[]
 
-ans = 0
+def getNext(x,y,s,d):
 
-def get(y):
-    global a, ans
+    if 0<=d<=1:
+        s%=2*(n-1)
+        if d==0:
+            if s<=x:
+                x-=s
+            else:
+                s-=x
+                x=0
+                d=1
+                if s<=n-1:
+                    x+=s
+                else:
+                    s-=n-1
+                    x=n-1
+                    d=0
+                    x-=s
+            return [x,y,d]
+        else:
+            if s<=n-1-x:
+                x+=s
+            else:
+                s-=n-1-x
+                x=n-1
+                d=0
+                if s<=n-1:
+                    x-=s
+                else:
+                    s-=n-1
+                    x=0
+                    d=1
+                    x+=s
+            return [x,y,d]
 
-    for x in range(n):
-        if a[x][y]!=0:
-            no=a[x][y]
-            if molds[no]==None:
-                continue
-            mold=molds[no]
-            ans += mold.b
-            a[x][y]=0
-            molds[no]=None
-
-            break
+    elif 2<=d<=3:
+        s%=2*(m-1)
+        if d==3:
+            if s<=y:
+                y-=s
+            else:
+                s-=y
+                y=0
+                d=2
+                if s<=m-1:
+                    y+=s
+                else:
+                    s-=m-1
+                    y=m-1
+                    d=3
+                    y-=s
+            return [x,y,d]
+        else:
+            if s<=m-1-y:
+                y+=s
+            else:
+                s-=m-1-y
+                y=m-1
+                d=3
+                if s<=m-1:
+                    y-=s
+                else:
+                    s-=m-1
+                    y=0
+                    d=2
+                    y+=s
+            return [x,y,d]
 
 def changeDirection(d):
     if d == 1:
@@ -46,75 +97,12 @@ def changeDirection(d):
     else:
         return 3
 
-
-# def move(x, y, d, s):
-#     if d == 1:  # 위
-#         remain = x
-#     elif d == 2:  # 아래
-#         remain = (n - 1) - x
-#     elif d == 3:  # 오른쪽
-#         remain = (m - 1) - y
-#     else:  # 왼쪽
-#         remain = y
-#
-#     if remain >= s:
-#         nd = d
-#         if d == 1:
-#             nx = x - s
-#             ny = y
-#         elif d == 2:
-#             nx = x + s
-#             ny = y
-#         elif d == 3:
-#             nx = x
-#             ny = y + s
-#         else:
-#             nx = x
-#             ny = y - s
-#     else:  # remain < s
-#         s -= remain
-#         if d == 1:
-#             nx = s
-#             ny = y
-#         elif d == 2:
-#             nx = (n - 1) - s
-#             ny = y
-#         elif d == 3:
-#             nx = x
-#             ny = (m - 1) - s
-#         else:
-#             nx = x
-#             ny = s
-#         nd = changeDirection(d)
-#
-#     return [nx, ny, nd]
-
-
 def get_next_pos(sx, sy, d, s):
     x, y = sx, sy
     if 1 <= d <= 2:  # 위,아래
         s %= 2 * (n - 1)
-        # ny=y
     else:  # 오른쪽, 왼쪽
         s %= 2 * (m - 1)
-        # nx=x
-
-    # if h<1:
-    #     nx,ny,nd=move(x,y,d,s)
-    # else: # h>=1
-    #     if h%2==1: # 홀수
-    #         if d==1: # 위
-    #             x=0
-    #         elif d==2: # 아래
-    #             x=n-1
-    #         elif d==3: # 오른쪽
-    #             y=m-1
-    #         else: # 왼쪽
-    #             y=0
-    #         d = changeDirection(d)  # 방향전환
-    #     else: # (h%2==0. 짝수)
-    #         pass
-    #     nx,ny,nd=move(x,y,d,r+1)
 
     while s>0:
         if d==1: # 위
@@ -141,38 +129,44 @@ def get_next_pos(sx, sy, d, s):
 
     return [x, y, d]
 
-
-def process():
-    global a
-
-    tmp=[[0]*m for _ in range(n)]
-
-    for no in range(1,K+1):
-        if molds[no] is None: continue
-        mold=molds[no]
-        x, y,s,d,b = mold.x,mold.y,mold.s,mold.d,mold.b
-        if s == 0:
-            tmp[x][y]=no
-            continue
-        nx, ny, nd = get_next_pos(x, y, d, s)
-        mold.x,mold.y,mold.d=nx,ny,nd
-        if tmp[nx][ny]==0:
-            tmp[nx][ny]=a[x][y]
+def move():
+    global a,sharks
+    
+    b=[[0]*m for _ in range(n)]
+    
+    for shark in sharks:
+        if shark==None: continue
+        no,x,y,s,d,size=shark.no,shark.x,shark.y,shark.s,shark.d,shark.size
+        nx,ny,nd=getNext(x,y,s,d)
+        # nx,ny,nd=get_next_pos(x,y,s,d)
+        shark.x,shark.y,shark.d=nx,ny,nd
+        if b[nx][ny]==0:
+            b[nx][ny]=shark
         else:
-            other_no=tmp[nx][ny]
-            other=molds[other_no]
-            if other==None:continue
-            if other.b<b:
-                tmp[nx][ny]=no
-                molds[other_no]=None
-            else:
-                molds[no]=None
-    a=tmp
+            other=b[nx][ny]
+            if other.size<shark.size:
+                b[nx][ny]=shark
+                sharks[other.no]=None
+            elif other.size>shark.size:
+                sharks[no]=None
+    a=b
 
-for col in range(m):
-    # 탐색 및 채취
-    get(col)
-    # 곰팡이 이동 및 싸움
-    process()
+for no in range(l):
+    r,c,s,d,size=map(int,input().split())
+    r-=1
+    c-=1
+    d-=1
+    shark=Shark(no,r,c,s,d,size)
+    a[r][c]=shark
+    sharks.append(shark)
+
+for y in range(m):
+    for x in range(n):
+        if a[x][y]!=0:
+            ans+=a[x][y].size
+            sharks[a[x][y].no] = None
+            a[x][y]=0
+            break
+    move()
 
 print(ans)
