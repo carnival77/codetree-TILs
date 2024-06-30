@@ -30,7 +30,7 @@ def get(y):
             mold=molds[no]
             ans += mold.b
             a[x][y]=0
-            molds[mold.no]=None
+            molds[no]=None
 
             break
 
@@ -159,6 +159,7 @@ def process():
         else:
             other_no=tmp[nx][ny]
             other=molds[other_no]
+            if other==None:continue
             if other.b<b:
                 tmp[nx][ny]=no
                 molds[other_no]=None
