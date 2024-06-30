@@ -1,91 +1,40 @@
-import sys
-input=sys.stdin.readline
+n, m, K = map(int, input().split())
+a = [[0]*m for _ in range(n)]
+molds=[None]*(K+1)
 
-class Shark:
-    def __init__(self,no,x,y,s,d,size):
+class Mold:
+    def __init__(self,no,x,y,b,s,d):
         self.no=no
         self.x=x
         self.y=y
+        self.b=b
         self.s=s
         self.d=d
-        self.size=size
-        
-#  상,하,우,좌
-dx=[-1,1,0,0]
-dy=[0,0,1,-1]
 
-n,m,l=map(int,input().split())
-a=[[0]*m for _ in range(n)]
-ans=0
-sharks=[None]
+for no in range(1,K+1):
+    x, y, s, d, b = map(int, input().split())
+    x -= 1
+    y -= 1
+    mold=Mold(no,x,y,b,s,d)
+    a[x][y]=no
+    molds[no]=mold
 
-def getNext(x,y,s,d):
+ans = 0
 
-    if 0<=d<=1:
-        s%=2*(n-1)
-        if d==0:
-            if s<=x:
-                x-=s
-            else:
-                s-=x
-                x=0
-                d=1
-                if s<=n-1:
-                    x+=s
-                else:
-                    s-=n-1
-                    x=n-1
-                    d=0
-                    x-=s
-            return [x,y,d]
-        else:
-            if s<=n-1-x:
-                x+=s
-            else:
-                s-=n-1-x
-                x=n-1
-                d=0
-                if s<=n-1:
-                    x-=s
-                else:
-                    s-=n-1
-                    x=0
-                    d=1
-                    x+=s
-            return [x,y,d]
+def get(y):
+    global a, ans
 
-    elif 2<=d<=3:
-        s%=2*(m-1)
-        if d==3:
-            if s<=y:
-                y-=s
-            else:
-                s-=y
-                y=0
-                d=2
-                if s<=m-1:
-                    y+=s
-                else:
-                    s-=m-1
-                    y=m-1
-                    d=3
-                    y-=s
-            return [x,y,d]
-        else:
-            if s<=m-1-y:
-                y+=s
-            else:
-                s-=m-1-y
-                y=m-1
-                d=3
-                if s<=m-1:
-                    y-=s
-                else:
-                    s-=m-1
-                    y=0
-                    d=2
-                    y+=s
-            return [x,y,d]
+    for x in range(n):
+        if a[x][y]!=0:
+            no=a[x][y]
+            # if molds[no]==None:
+            #     continue
+            mold=molds[no]
+            ans += mold.b
+            a[x][y]=0
+            molds[no]=None
+
+            break
 
 def changeDirection(d):
     if d == 1:
@@ -129,46 +78,38 @@ def get_next_pos(sx, sy, d, s):
 
     return [x, y, d]
 
-def move():
-    global a,sharks
-    
-    b=[[0]*m for _ in range(n)]
-    
-    for shark in sharks:
-        if shark==None: continue
-        no,x,y,s,d,size=shark.no,shark.x,shark.y,shark.s,shark.d,shark.size
-        # nx,ny,nd=getNext(x,y,s,d)
-        nx,ny,nd=get_next_pos(x,y,d,s)
-        shark.x,shark.y,shark.d=nx,ny,nd
-        if b[nx][ny]==0:
-            b[nx][ny]=no
+
+def process():
+    global a,molds
+
+    tmp=[[0]*m for _ in range(n)]
+
+    for no in range(1,K+1):
+        if molds[no] is None: continue
+        mold=molds[no]
+        x, y,s,d,b = mold.x,mold.y,mold.s,mold.d,mold.b
+        # if s == 0:
+        #     tmp[x][y]=no
+        #     continue
+        nx, ny, nd = get_next_pos(x, y, d, s)
+        mold.x,mold.y,mold.d=nx,ny,nd
+        if tmp[nx][ny]==0:
+            tmp[nx][ny]=a[x][y]
         else:
-            other_no=b[nx][ny]
-            other=sharks[other_no]
-            if other.size<shark.size:
-                b[nx][ny]=no
-                sharks[other.no]=None
-            elif other.size>shark.size:
-                sharks[no]=None
-    a=b
+            other_no=tmp[nx][ny]
+            other=molds[other_no]
+            # if other==None:continue
+            if other.b<b:
+                tmp[nx][ny]=no
+                molds[other_no]=None
+            else:
+                molds[no]=None
+    a=tmp
 
-for no in range(1,l+1):
-    r,c,s,d,size=map(int,input().split())
-    r-=1
-    c-=1
-    # d-=1
-    shark=Shark(no,r,c,s,d,size)
-    a[r][c]=no
-    sharks.append(shark)
-
-for y in range(m):
-    for x in range(n):
-        if a[x][y]!=0:
-            shark=sharks[a[x][y]]
-            ans+=shark.size
-            sharks[shark.no] = None
-            a[x][y]=0
-            break
-    move()
+for col in range(m):
+    # 탐색 및 채취
+    get(col)
+    # 곰팡이 이동 및 싸움
+    process()
 
 print(ans)
