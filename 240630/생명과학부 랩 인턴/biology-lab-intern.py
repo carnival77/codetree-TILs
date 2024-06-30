@@ -164,7 +164,6 @@ def process():
                 molds[other_no]=None
             else:
                 molds[no]=None
-        tmp[x][y]=0
     a=tmp
 
 for col in range(m):
