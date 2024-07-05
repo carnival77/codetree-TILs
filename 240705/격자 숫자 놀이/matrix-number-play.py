@@ -5,7 +5,6 @@ r-=1
 c-=1
 
 a=[list(map(int,input().split())) for _ in range(3)]
-n,m=3,3
 time=0
 
 def transpose(a):
@@ -48,6 +47,9 @@ def C(a):
 
 while time<=100:
 
+    n = len(a)
+    m = len(a[0])
+
     if 0<=r<n and 0<=c<m and a[r][c]==K:
         print(time)
         break
@@ -56,8 +58,6 @@ while time<=100:
         a=R(a)
     else:
         a=C(a)
-    n = len(a)
-    m = len(a[0])
     time+=1
 
 if time>100:
