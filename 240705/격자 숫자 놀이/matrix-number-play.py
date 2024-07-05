@@ -48,6 +48,10 @@ def C(a):
 
 while time<=100:
 
+    if 0<=r<n and 0<=c<m and a[r][c]==K:
+        print(time)
+        break
+
     if n>=m:
         a=R(a)
     else:
@@ -55,10 +59,6 @@ while time<=100:
     n = len(a)
     m = len(a[0])
     time+=1
-
-    if 0<=r<n and 0<=c<m and a[r][c]==K:
-        print(time)
-        break
 
 if time>100:
     print(-1)
