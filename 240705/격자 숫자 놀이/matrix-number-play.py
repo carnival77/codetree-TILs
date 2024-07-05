@@ -23,6 +23,8 @@ def R(a):
         counter=Counter(arr)
         l = list(counter.items())
         l.sort(key=lambda x: (x[1], x[0]))
+        if len(l)>50:
+            l=l[:50]
         res=[]
         for x,y in l:
             res.append(x)
@@ -37,6 +39,8 @@ def R(a):
         if len(row)<length:
             dif=length-len(row)
             res+=[0]*dif
+        if len(res)>100:
+            res=res[:100]
         c.append(res)
 
     return c
