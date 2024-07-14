@@ -53,19 +53,20 @@ def move1():
             if b[nx][ny]!=0:
                 cand.append([d[nx][ny],nx,ny,b[nx][ny]])
 
-    cand.sort(key=lambda x:(x[0],x[1],x[2]))
-    no=cand[0][-1]
-    dist=cand[0][0]
-    tx=cand[0][1]
-    ty=cand[0][2]
+    if len(cand)>0:
+        cand.sort(key=lambda x:(x[0],x[1],x[2]))
+        no=cand[0][-1]
+        dist=cand[0][0]
+        tx=cand[0][1]
+        ty=cand[0][2]
 
-    if energy-dist>=0:
-        energy-=dist
-        sx,sy=tx,ty
-        b[tx][ty]=0
-        return [True,no]
-    else:
-        return [False,-1]
+        if energy-dist>=0:
+            energy-=dist
+            sx,sy=tx,ty
+            b[tx][ty]=0
+            return [True,no]
+
+    return [False,-1]
 
 def move2(ex,ey):
     global energy,sx,sy
