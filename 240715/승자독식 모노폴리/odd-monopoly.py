@@ -56,7 +56,7 @@ def move():
                     continue
                 if b[nx][ny]==0:
                     ok1=True
-                    nd=k
+                    nd=dirs[k]
                     break
             # 만약 그러한 칸이 없을 경우에는 인접한 4방향 중 본인이 독점계약한 땅으로 이동
             if not ok1:
@@ -65,7 +65,7 @@ def move():
                     if not inBoard(nx, ny):
                         continue
                     if b[nx][ny] == no:
-                        nd = k
+                        nd = dirs[k]
                         break
             # 만약 이동할 칸이 비어있는 경우
             if tmp[nx][ny]==0:
@@ -79,22 +79,6 @@ def move():
                     tpd[no]=nd
     a=tmp
     pd=tpd
-
-# def remove_update():
-#     global pa,a,ps
-#
-#     for x in range(n):
-#         for y in range(n):
-#             if len(pa[x][y])>1:
-#                 nums=[]
-#                 for p in pa[x][y]:
-#                     nums.append(p.no)
-#                 nums.sort()
-#                 minNum=nums[0]
-#                 for p in pa[x][y]:
-#                     if p.no!=minNum:
-#                         pa[x][y].remove(p)
-#                 a[x][y]=p.no
 
 def decrease():
     global c
@@ -120,8 +104,6 @@ for turn in range(1,1001):
     get()
     # 플레이어 전체 이동
     move()
-    # 플레이어 제거 및 위치 갱신
-    # remove_update()
     # 독점 계약 기간 줄어들기
     decrease()
     # 1번 플레이어만 남았는지 확인
