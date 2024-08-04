@@ -43,31 +43,97 @@ def spread():
         q.append([nx,ny,num])
         while q:
             x,y,num=q.popleft()
-            # c[x][y] = num
             tmp[x][y] = num
             num-=1
             if num==0:continue
-            # 바라보는 방향에서 좌측 대각선 45도
-            if b[x][y]==0:
+            # 좌
+            if d==0:
+                # 바라보는 방향에서 우측 대각선 45도
+                nd1 = (d + 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1,ny1) and b[x][y]==0:
+                    nd2 = (nd1 - 1) % 4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2,ny2) and b2[nx1][ny1]==0:
+                        q.append([nx2,ny2,num])
+                # 바라보는 방향 정면
+                nx1,ny1=x+dx[d],y+dy[d]
+                if inBoard(nx1,ny1) and b2[x][y]==0:
+                    q.append([nx1,ny1,num])
+                # 바라보는 방향에서 좌측 대각선 45도
+                nd1 = (d - 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1, ny1) and b[nx1][ny1] == 0:
+                    nd2 = (nd1 + 1) % 4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2, ny2) and b2[nx1][ny1] == 0:
+                        q.append([nx2, ny2, num])
+            # 상
+            elif d==1:
+                # 바라보는 방향에서 좌측 대각선 45도
+                nd1 = (d - 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1, ny1) and b2[x][y] == 0:
+                    nd2 = (nd1 + 1) % 4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2, ny2) and b[nx1][ny1] == 0:
+                        q.append([nx2, ny2, num])
+                # 바라보는 방향 정면
+                nx1, ny1 = x + dx[d], y + dy[d]
+                if inBoard(nx1, ny1) and b[x][y] == 0:
+                    q.append([nx1, ny1, num])
+                # 바라보는 방향에서 우측 대각선 45도
+                nd1 = (d + 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1, ny1) and b2[nx1][ny1] == 0:
+                    nd2 = (nd1 - 1) % 4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2, ny2) and b[nx1][ny1] == 0:
+                        q.append([nx2, ny2, num])
+            # 우
+            elif d==2:
+                # 바라보는 방향에서 좌측 대각선 45도
+                nd1 = (d - 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1,ny1) and b[x][y]==0:
+                    nd2=(nd1+1)%4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2,ny2) and b2[nx2][ny2]==0:
+                        q.append([nx2,ny2,num])
+                # 바라보는 방향 정면
+                nx1,ny1=x+dx[d],y+dy[d]
+                if inBoard(nx1,ny1) and b[nx1][ny1]==0:
+                    q.append([nx1,ny1,num])
+                # 바라보는 방향에서 우측 대각선 45도
+                nd1=(d+1)%4
+                nx1,ny1=x+dx[nd1],y+dy[nd1]
+                if inBoard(nx1,ny1) and b[nx1][ny1]==0:
+                    nd2=(nd1-1)%4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2,ny2) and b2[nx2][ny2]==0:
+                        q.append([nx2,ny2,num])
+            # 하
+            else:
+                # 바라보는 방향에서 좌측 대각선 45도
+                nd1 = (d + 1) % 4
+                nx1, ny1 = x + dx[nd1], y + dy[nd1]
+                if inBoard(nx1,ny1) and b2[x][y]==0:
+                    nd2=(nd1-1)%4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2,ny2) and b[nx2][ny2]==0:
+                        q.append([nx2,ny2,num])
+                # 바라보는 방향 정면
+                nx1,ny1=x+dx[d],y+dy[d]
+                if inBoard(nx1,ny1) and b[nx1][ny1]==0:
+                    q.append([nx1,ny1,num])
+                # 바라보는 방향에서 우측 대각선 45도
                 nd1=(d-1)%4
                 nx1,ny1=x+dx[nd1],y+dy[nd1]
-                nd2=(nd1+1)%4
-                nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
-                if inBoard(nx2,ny2) and b2[nx2][ny2]==0:
-                    q.append([nx2,ny2,num])
-            # 바라보는 방향 정면
-            nx1,ny1=x+dx[d],y+dy[d]
-            if inBoard(nx1,ny1) and b[nx1][ny1]==0:
-                q.append([nx1,ny1,num])
-            # 바라보는 방향에서 우측 대각선 45도
-            nd1=(d+1)%4
-            nx1,ny1=x+dx[nd1],y+dy[nd1]
-            if inBoard(nx1,ny1) and b[nx1][ny1]==0:
-                nd2=(nd1-1)%4
-                nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
-                if inBoard(nx2,ny2) and b2[nx2][ny2]==0:
-                    q.append([nx2,ny2,num])
-
+                if inBoard(nx1,ny1) and b2[nx1][ny1]==0:
+                    nd2=(nd1+1)%4
+                    nx2, ny2 = nx1 + dx[nd2], ny1 + dy[nd2]
+                    if inBoard(nx2,ny2) and b[nx2][ny2]==0:
+                        q.append([nx2,ny2,num])
         for x in range(n):
             for y in range(n):
                 c[x][y]+=tmp[x][y]
