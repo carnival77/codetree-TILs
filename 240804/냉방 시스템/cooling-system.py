@@ -151,19 +151,19 @@ def mix():
                 if not inBoard(nx,ny): continue
                 # 좌
                 if k==0:
-                    if b[x][y]==1:
+                    if b2[x][y]==1:
                         continue
                 # 상
                 elif k==1:
-                    if b[x][y]==0:
+                    if b[x][y]==1:
                         continue
                 # 우
                 elif k==2:
-                    if b[nx][ny]==0:
+                    if b2[nx][ny]==1:
                         continue
                 # 하
                 else:
-                    if b[nx][ny]==0:
+                    if b[nx][ny]==1:
                         continue
                 dif=abs(c[x][y]-c[nx][ny])//4
                 if dif==0: continue
