@@ -123,7 +123,7 @@ def remove():
 
     for x in range(n):
         for y in range(n):
-            if c[x][y]==turn-2:
+            if c[x][y]==turn:
                 c[x][y]=0
 
 def complete():
