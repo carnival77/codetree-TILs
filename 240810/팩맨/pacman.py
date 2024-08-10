@@ -157,8 +157,9 @@ for turn in range(1,T+1):
     remove()
     # 몬스터 복제 완료
     complete()
-    # 남은 몬스터 다음 턴 맵으로 이동
-    copy()
+    if turn<=25:
+        # 남은 몬스터 다음 턴 맵으로 이동
+        copy()
 
 ans=0
 for x in range(n):
