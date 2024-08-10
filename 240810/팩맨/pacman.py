@@ -36,7 +36,7 @@ def duplicate():
         for y in range(n):
             for d in range(8):
                 if a[turn][x][y][d]>0:
-                    b[x][y][d]=a[turn][x][y][d]
+                    b[x][y][d]+=a[turn][x][y][d]
 
 def inBoard(nx,ny):
     if 0<=nx<n and 0<=ny<n:
@@ -103,20 +103,19 @@ def PanmanMove():
                     cnt+=tmp[nx][ny][d]
                     tmp[nx][ny][d]=0
             x,y=nx,ny
-        if ok and cnt>0:
+        if ok:
             cand.append([cnt,prod])
 
-    if len(cand)>0:
-        cand.sort(key=lambda x:(-x[0],x[1]))
-        route=cand[0][1]
-        flag=0
-        for dir in route:
-            nx, ny = sx + dx[dir], sy + dy[dir]
-            for d in range(8):
-                if a[turn][nx][ny][d]>0:
-                    a[turn][nx][ny][d]=0
-                    c[nx][ny]=turn+2
-            sx,sy=nx,ny
+    cand.sort(key=lambda x:(-x[0],x[1]))
+    route=cand[0][1]
+    flag=0
+    for dir in route:
+        nx, ny = sx + dx[dir], sy + dy[dir]
+        for d in range(8):
+            if a[turn][nx][ny][d]>0:
+                a[turn][nx][ny][d]=0
+                c[nx][ny]=turn+2
+        sx,sy=nx,ny
 
 def remove():
     global b
