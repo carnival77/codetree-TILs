@@ -56,11 +56,11 @@ def MonsterMove():
                     ok=False
                     nd=d
                     nx,ny=x+dx[nd],y+dy[nd]
-                    if not inBoard(nx,ny) or (nx,ny)==(sx,sy) or c[x][y]!=0:
+                    if not inBoard(nx,ny) or (nx,ny)==(sx,sy) or c[nx][ny]!=0:
                         for i in range(8):
                             nd=(nd+1)%8
                             nx,ny=x+dx[nd],y+dy[nd]
-                            if inBoard(nx,ny) and (nx,ny)!=(sx,sy) and c[x][y]==0:
+                            if inBoard(nx,ny) and (nx,ny)!=(sx,sy) and c[nx][ny]==0:
                                 ok=True
                                 break
                     else:
