@@ -99,6 +99,7 @@ def move2():
 
     for i in range(3):
         nx,ny=sx+dx[watch_d]*i,sy+dy[watch_d]*i
+        if not inBoard(nx,ny):continue
         if b[nx][ny]==0 and len(a[nx][ny])>0:
             ans+=turn*len(a[nx][ny])
             for f in a[nx][ny]:
