@@ -53,7 +53,7 @@ def duplicate():
                 cand=[]
                 for k in range(4):
                     nx,ny=x+dx[k],y+dy[k]
-                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]==0:
+                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
                         cnt+=1
                         cand.append([nx,ny])
                 for nx,ny in cand:
@@ -92,26 +92,26 @@ def remove():
         ans+=cnt
         pos=cand[0][-1]
         for nx,ny in pos:
-            b[nx][ny]=c
+            b[nx][ny]=year+c
             a[nx][ny]=0
 
-def decrease():
-    global b
+# def decrease():
+#     global b
+#
+#     for x in range(n):
+#         for y in range(n):
+#             if b[x][y]>0:
+#                 b[x][y]-=1
 
-    for x in range(n):
-        for y in range(n):
-            if b[x][y]>0:
-                b[x][y]-=1
-
-round=0
-for round in range(1,m+1):
+year=0
+for year in range(1,m+1):
 
     # 성장
     grow()
     # 번식
     duplicate()
-    # 제초제 감소
-    decrease()
+    # # 제초제 감소
+    # decrease()
     # 박멸
     remove()
 
