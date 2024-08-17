@@ -61,8 +61,7 @@ def duplicate():
 
     a=tmp
 
-def remove():
-    global a,b,ans
+def select():
 
     dx,dy=dx2,dy2
     cand=[]
@@ -71,37 +70,42 @@ def remove():
         for y in range(n):
             if a[x][y]>0:
                 cnt=a[x][y]
-                # b[x][y]=c
-                pos=[]
-                pos.append([x,y])
                 for k in range(4):
                     for i in range(1,K+1):
                         nx,ny=x+dx[k]*i,y+dy[k]*i
-                        if not inBoard(nx,ny):continue
-                        # b[nx][ny] = c
-                        pos.append([nx,ny])
+                        if not inBoard(nx,ny):break
                         if a[nx][ny]>0:
                             cnt+=a[nx][ny]
                         else:
                             break
-                cand.append([cnt,x,y,pos])
+                cand.append([cnt,x,y])
 
     if len(cand)>0:
         cand.sort(key=lambda x:(-x[0],x[1],x[2]))
-        cnt=cand[0][0]
-        ans+=cnt
-        pos=cand[0][-1]
-        for nx,ny in pos:
-            b[nx][ny]=year+c
-            a[nx][ny]=0
+        return [cand[0][1],cand[0][2]]
+    else:
+        return None
 
-# def decrease():
-#     global b
-#
-#     for x in range(n):
-#         for y in range(n):
-#             if b[x][y]>0:
-#                 b[x][y]-=1
+def remove(res):
+    global ans,a,b
+
+    dx,dy=dx2,dy2
+    x,y=res
+
+    b[x][y]=c+year
+    ans+=a[x][y]
+    a[x][y]=0
+
+    for k in range(4):
+        for i in range(1,K+1):
+            nx, ny = x + dx[k] * i, y + dy[k] * i
+            if not inBoard(nx, ny): break
+            b[nx][ny] = year + c
+            if a[nx][ny]>0:
+                ans+=a[nx][ny]
+                a[nx][ny]=0
+            else:
+                break
 
 year=0
 for year in range(1,m+1):
@@ -110,9 +114,10 @@ for year in range(1,m+1):
     grow()
     # 번식
     duplicate()
-    # # 제초제 감소
-    # decrease()
+    # 위치 선정
+    res=select()
     # 박멸
-    remove()
+    if res is not None:
+        remove(res)
 
 print(ans)
