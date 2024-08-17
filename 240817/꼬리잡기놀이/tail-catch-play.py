@@ -123,7 +123,7 @@ def throw(round):
             if 1<=a[x][y]<=3:
                 return [True,x,y]
     elif n+1<=R<=2*n:
-        y=R%(n+1)-1
+        y=R%(n+1)
         for x in range(n-1,-1,-1):
             if 1 <= a[x][y] <= 3:
                 return [True, x, y]
