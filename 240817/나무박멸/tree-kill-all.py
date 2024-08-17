@@ -53,7 +53,7 @@ def duplicate():
                 cand=[]
                 for k in range(4):
                     nx,ny=x+dx[k],y+dy[k]
-                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]<year:
+                    if inBoard(nx,ny) and a[nx][ny]==0 and b[nx][ny]==0:
                         cnt+=1
                         cand.append([nx,ny])
                 for nx,ny in cand:
@@ -61,7 +61,8 @@ def duplicate():
 
     a=tmp
 
-def select():
+def remove():
+    global a,b,ans
 
     dx,dy=dx2,dy2
     cand=[]
@@ -70,54 +71,48 @@ def select():
         for y in range(n):
             if a[x][y]>0:
                 cnt=a[x][y]
+                # b[x][y]=c
+                pos=[]
+                pos.append([x,y])
                 for k in range(4):
                     for i in range(1,K+1):
                         nx,ny=x+dx[k]*i,y+dy[k]*i
                         if not inBoard(nx,ny):break
+                        # b[nx][ny] = c
+                        pos.append([nx,ny])
                         if a[nx][ny]>0:
                             cnt+=a[nx][ny]
                         else:
                             break
-                cand.append([cnt,x,y])
+                cand.append([cnt,x,y,pos])
 
     if len(cand)>0:
         cand.sort(key=lambda x:(-x[0],x[1],x[2]))
-        return [cand[0][1],cand[0][2]]
-    else:
-        return None
+        cnt=cand[0][0]
+        ans+=cnt
+        pos=cand[0][-1]
+        for nx,ny in pos:
+            b[nx][ny]=c
+            a[nx][ny]=0
 
-def remove(res):
-    global ans,a,b
+def decrease():
+    global b
 
-    dx,dy=dx2,dy2
-    x,y=res
+    for x in range(n):
+        for y in range(n):
+            if b[x][y]>0:
+                b[x][y]-=1
 
-    b[x][y]=c+year
-    ans+=a[x][y]
-    a[x][y]=0
-
-    for k in range(4):
-        for i in range(1,K+1):
-            nx, ny = x + dx[k] * i, y + dy[k] * i
-            if not inBoard(nx, ny): break
-            b[nx][ny] = year + c
-            if a[nx][ny]>0:
-                ans+=a[nx][ny]
-                a[nx][ny]=0
-            else:
-                break
-
-year=0
-for year in range(1,m+1):
+round=0
+for round in range(1,m+1):
 
     # 성장
     grow()
     # 번식
     duplicate()
-    # 위치 선정
-    res=select()
+    # 제초제 감소
+    decrease()
     # 박멸
-    if res is not None:
-        remove(res)
+    remove()
 
 print(ans)
