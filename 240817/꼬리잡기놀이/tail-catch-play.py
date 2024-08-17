@@ -69,14 +69,16 @@ def getNext(kind,x,y,no):
         for k in range(4):
             nx, ny = x + dx[k], y + dy[k]
             if not inBoard(nx, ny): continue
-            if b[nx][ny] == no and 3 <= a[nx][ny] <= 4:
+            # if b[nx][ny] == no and 3 <= a[nx][ny] <= 4:
+            if 3 <= a[nx][ny] <= 4:
                 return [nx,ny]
 
     elif kind==3:
         for k in range(4):
             nx, ny = x + dx[k], y + dy[k]
             if not inBoard(nx, ny): continue
-            if b[nx][ny]==no and 1<=a[nx][ny]<=2:
+            # if b[nx][ny]==no and 1<=a[nx][ny]<=2:
+            if 1<=a[nx][ny]<=2:
                 return [nx,ny]
 
 def move():
