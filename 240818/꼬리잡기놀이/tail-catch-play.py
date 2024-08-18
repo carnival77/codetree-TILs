@@ -9,7 +9,7 @@ visit=[[False]*n for _ in range(n)]
 
 ans=0
 
-#  우,상,좌,하
+#  우,상,좌,하 - 공이 날아가는 방향
 dx=[0,-1,0,1]
 dy=[1,0,-1,0]
 
@@ -27,31 +27,24 @@ def bfs(no,sx,sy):
     q.append((sx,sy))
 
     team=deque()
-    head,tail=None,None
-
-    if a[sx][sy]==1:
-        head=[sx,sy]
-    elif a[sx][sy]==2:
-        team.append([sx,sy])
-    elif a[sx][sy]==3:
-        tail=[sx,sy]
+    head=[sx,sy]
+    team.append(head)
+    tail=None
 
     while q:
         x,y=q.popleft()
         for k in range(4):
             nx,ny=x+dx[k],y+dy[k]
-            if not inBoard(nx,ny) or a[nx][ny]==0 or visit[nx][ny]:continue
-            q.append((nx,ny))
-            visit[nx][ny]=True
-            b[nx][ny]=no
-            if a[nx][ny]==1:
-                head=[nx,ny]
-            elif a[nx][ny]==2:
-                team.append([nx,ny])
-            elif a[nx][ny]==3:
-                tail=[nx,ny]
+            # 네방향, 범위내, 미방문, 조건: 2 또는 출발지 아닌곳에서 온 3
+            if inBoard(nx,ny) and 2<=a[nx][ny]<=4 and not visit[nx][ny] and not (a[nx][ny]==3 and (x,y)==(sx,sy)):
+                q.append((nx, ny))
+                visit[nx][ny] = True
+                b[nx][ny] = no
+                if a[nx][ny]==2:
+                    team.append([nx,ny])
+                elif a[nx][ny]==3:
+                    tail=[nx,ny]
 
-    team.appendleft(head)
     team.append(tail)
     teams[no]=team
 
@@ -60,7 +53,7 @@ def init():
     no=1
     for x in range(n):
         for y in range(n):
-            if a[x][y]>0 and not visit[x][y]:
+            if a[x][y]==1 and not visit[x][y]: # 머리 사람 발견 시 bfs 탐색하여 팀 파악
                 bfs(no,x,y)
                 no+=1
 
@@ -118,8 +111,8 @@ def move():
 
 def throw(round):
 
-    dir=(round//n)%4
-    offset=round%n
+    dir=(round//n)%4 # 공이 날아가는 네 가지 방향
+    offset=round%n # 각 방향별 상세 라인
 
     if dir==0:
         sx=offset
