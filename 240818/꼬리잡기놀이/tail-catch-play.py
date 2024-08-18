@@ -26,6 +26,7 @@ def bfs(no,sx,sy):
     q=deque()
     q.append((sx,sy))
 
+    # 머리부터 팀에 넣어졌고 머리와 인접한 3이 아닌 2부터 팀에 넣기 시작하여 3을 팀에 마지막으로 넣는다
     team=deque()
     head=[sx,sy]
     team.append(head)
@@ -35,7 +36,7 @@ def bfs(no,sx,sy):
         x,y=q.popleft()
         for k in range(4):
             nx,ny=x+dx[k],y+dy[k]
-            # 네방향, 범위내, 미방문, 조건: 2 또는 출발지 아닌곳에서 온 3
+            # 네방향, 범위내, 미방문, 2~4 이고 머리 바로 옆의 3이 아닌 경우
             if inBoard(nx,ny) and 2<=a[nx][ny]<=4 and not visit[nx][ny] and not (a[nx][ny]==3 and (x,y)==(sx,sy)):
                 q.append((nx, ny))
                 visit[nx][ny] = True
@@ -57,23 +58,21 @@ def init():
                 bfs(no,x,y)
                 no+=1
 
-def getNext(kind,x,y,no):
-
-    if kind==1:
-        for k in range(4):
-            nx, ny = x + dx[k], y + dy[k]
-            if not inBoard(nx, ny): continue
-            if b[nx][ny] == no and 3 <= a[nx][ny] <= 4:
-            # if 3 <= a[nx][ny] <= 4:
-                return [nx,ny]
-
-    elif kind==3:
-        for k in range(4):
-            nx, ny = x + dx[k], y + dy[k]
-            if not inBoard(nx, ny): continue
-            if b[nx][ny]==no and a[nx][ny]==2:
-            # if 1<=a[nx][ny]<=2:
-                return [nx,ny]
+# def getNext(kind,x,y,no):
+#
+#     if kind==1:
+#         for k in range(4):
+#             nx, ny = x + dx[k], y + dy[k]
+#             if not inBoard(nx, ny): continue
+#             if b[nx][ny] == no and 3 <= a[nx][ny] <= 4:
+#                 return [nx,ny]
+#
+#     elif kind==3:
+#         for k in range(4):
+#             nx, ny = x + dx[k], y + dy[k]
+#             if not inBoard(nx, ny): continue
+#             if b[nx][ny]==no and a[nx][ny]==2:
+#                 return [nx,ny]
 
 def move():
     global teams,b,a
@@ -82,32 +81,49 @@ def move():
         team=teams[no]
         if team is None: continue
 
-        new_team=deque()
-
-        head=team[0]
-        tail=team[-1]
-        hx,hy=head
-        tx,ty=tail
-
-        # 머리, 꼬리 다음 이동 위치 구하기
-        nhx,nhy=getNext(1,hx,hy,no)
-        ntx, nty = getNext(3, tx, ty, no)
-
-        # 중간(나머지) 이동
-        for x,y in list(team)[:-2]:
-            new_team.append([x,y])
-
-        # 꼬리 이동
-        a[ntx][nty]=3
+        tx,ty=team.pop()
         a[tx][ty]=4
-        new_team.append([ntx,nty])
+        b[tx][ty]=0
+        new_tx,new_ty=team[-1]
+        a[new_tx][new_ty]=3
+        b[new_tx][new_ty]=no
+        sx,sy=team[0]
+        a[sx][sy]=2
+        for k in range(4):
+            nx,ny=sx+dx[k],sy+dy[k]
+            if not inBoard(nx,ny):continue
+            if a[nx][ny]==4:
+                team.appendleft([nx,ny])
+                a[nx][ny]=1
+                b[nx][ny]=no
+                break
 
-        # 머리 이동
-        a[nhx][nhy]=1
-        a[hx][hy]=2
-        new_team.appendleft([nhx,nhy])
-
-        teams[no]=new_team
+        # new_team=deque()
+        #
+        # head=team[0]
+        # tail=team[-1]
+        # hx,hy=head
+        # tx,ty=tail
+        #
+        # # 머리, 꼬리 다음 이동 위치 구하기
+        # nhx,nhy=getNext(1,hx,hy,no)
+        # ntx, nty = getNext(3, tx, ty, no)
+        #
+        # # 중간(나머지) 이동
+        # for x,y in list(team)[:-2]:
+        #     new_team.append([x,y])
+        #
+        # # 꼬리 이동
+        # a[ntx][nty]=3
+        # a[tx][ty]=4
+        # new_team.append([ntx,nty])
+        #
+        # # 머리 이동
+        # a[nhx][nhy]=1
+        # a[hx][hy]=2
+        # new_team.appendleft([nhx,nhy])
+        #
+        # teams[no]=new_team
 
 def throw(round):
 
@@ -126,31 +142,6 @@ def throw(round):
     else:
         sx=0
         sy=n-1-offset
-
-    flag1=0
-
-    # R=round%(4*n)
-    #
-    # if 1<=R<=n:
-    #     x=R-1
-    #     for y in range(n):
-    #         if 1<=a[x][y]<=3:
-    #             return [True,x,y]
-    # elif n+1<=R<=2*n:
-    #     y=R%(n+1)
-    #     for x in range(n-1,-1,-1):
-    #         if 1 <= a[x][y] <= 3:
-    #             return [True, x, y]
-    # elif 2*n+1<=R<=3*n:
-    #     x=(n-1)-R%(2*n+1)
-    #     for y in range(n-1,-1,-1):
-    #         if 1 <= a[x][y] <= 3:
-    #             return [True, x, y]
-    # else:
-    #     y=(n-1)-R % (3 * n + 1)
-    #     for x in range(n):
-    #         if 1 <= a[x][y] <= 3:
-    #             return [True, x, y]
 
     for i in range(n):
         nx,ny=sx+dx[dir]*i,sy+dy[dir]*i
@@ -176,7 +167,6 @@ def process(sx,sy):
     a[hx][hy]=1
     a[tx][ty]=3
 
-round=0
 # 팀 파악
 init()
 
