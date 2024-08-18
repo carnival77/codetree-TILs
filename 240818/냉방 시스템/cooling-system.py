@@ -19,9 +19,9 @@ for _ in range(m):
     x-=1
     y-=1
     if s==0:
-        b[x][y][x-1][y]=1
+        b[x][y][x-1][y]=b[x-1][y][x][y]=1
     elif s==1:
-        b[x][y][x][y-1]=1
+        b[x][y][x][y-1]=b[x][y-1][x][y]=1
 
 # 에어컨 위치
 aircon=[] # 에어컨 위치, 종류
