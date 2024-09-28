@@ -105,7 +105,7 @@ def laser():
         return False
 
     for x,y in route[1:-1]:
-        a[x][y]-=damage/2
+        a[x][y]-=damage//2
         c[x][y]=turn
 
     return True
@@ -116,7 +116,7 @@ def canon():
     for k in range(8):
         nx,ny=outBound(x+dx1[k],y+dy1[k])
         if a[nx][ny]==0 or (nx,ny)==(ax,ay):continue
-        a[nx][ny]-=damage/2
+        a[nx][ny]-=damage//2
         c[nx][ny]=turn
 
 def attack():
