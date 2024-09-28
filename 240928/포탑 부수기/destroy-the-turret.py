@@ -10,7 +10,7 @@ c=[[0]*m for _ in range(n)] # 공격 관여 시점 맵
 dx=[0,1,0,-1]
 dy=[1,0,-1,0]
 
-#  대각선 8방향
+#  8방향
 dx1=[0,1,0,-1,1,-1,1,-1]
 dy1=[1,0,-1,0,1,1,-1,-1]
 
@@ -38,7 +38,7 @@ def selectTarget():
     cand=[]
     for x in range(n):
         for y in range(m):
-            if a[x][y] == 0: continue
+            if a[x][y] == 0 or (x,y)==(ax,ay): continue
             cand.append([a[x][y],b[x][y],x+y,y,x])
 
     cand.sort(key=lambda x: (-x[0], x[1], x[2], x[3]))
@@ -114,7 +114,7 @@ def canon():
     global a,c
 
     for k in range(8):
-        nx,ny=outBound(ax+dx1[k],ay+dy1[k])
+        nx,ny=outBound(tx+dx1[k],ty+dy1[k])
         if a[nx][ny]==0 or (nx,ny)==(ax,ay):continue
         a[nx][ny]-=damage//2
         c[nx][ny]=turn
