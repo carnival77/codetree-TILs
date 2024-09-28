@@ -119,6 +119,7 @@ def move2():
     for no in range(1,m+1):
         if panic[no]>=turn or pos[no] is None:continue
         x,y=pos[no]
+        minDist=getDistance(x,y,rx,ry)
         cand=[]
         for k in range(4):
             xdir=dx[k]
@@ -126,7 +127,8 @@ def move2():
             nx,ny=x+xdir,y+ydir
             if not inBoard(nx,ny) or a[nx][ny]>0:continue
             dist=getDistance(nx,ny,rx,ry)
-            cand.append([dist,k,[nx,ny],[xdir,ydir]])
+            if minDist>dist:
+                cand.append([dist,k,[nx,ny],[xdir,ydir]])
 
         if len(cand)>0:
             cand.sort()
