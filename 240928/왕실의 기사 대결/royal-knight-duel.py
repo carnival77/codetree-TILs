@@ -31,14 +31,14 @@ def inBoard(nx,ny):
         return True
     return False
 
-def process(no,dir):
+def process(sno,dir):
     global pos,b,hp
 
     # ok=True
     willMove=set()
     tmp=[[0]*n for _ in range(n)]
     q=deque()
-    q.append((no,dir))
+    q.append((sno,dir))
 
     # 이동 대상 선정
     while q:
@@ -71,10 +71,18 @@ def process(no,dir):
         pos[move_no]=[nx,ny]
         for x in range(nx,nx+h):
             for y in range(ny,ny+w):
-                tmp[x][y]=move_no
+                # tmp[x][y]=move_no
                 if a[x][y]==1:
-                    if hp[move_no]>0 and no!=move_no:
+                    if hp[move_no]>0 and sno!=move_no:
                         hp[move_no]-=1
+
+    for no in range(1,m+1):
+        x,y=pos[no]
+        h,w=size[no]
+        if hp[no]<=0:continue
+        for i in range(x, x + h):
+            for j in range(y, y + w):
+                tmp[i][j] = no
 
     b=tmp
     flag2=0
