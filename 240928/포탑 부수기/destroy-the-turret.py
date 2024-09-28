@@ -114,7 +114,7 @@ def canon():
     global a,c
 
     for k in range(8):
-        nx,ny=outBound(x+dx1[k],y+dy1[k])
+        nx,ny=outBound(ax+dx1[k],ay+dy1[k])
         if a[nx][ny]==0 or (nx,ny)==(ax,ay):continue
         a[nx][ny]-=damage//2
         c[nx][ny]=turn
