@@ -18,8 +18,9 @@ ax,ay=-1,-1 # 공격자
 tx,ty=-1,-1 # 공격 대상
 damage=0
 
-def selectAttacker():
-    global ax,ay
+# def selectAttacker():
+def select():
+    global ax,ay,tx,ty
 
     cand=[]
     for x in range(n):
@@ -31,19 +32,20 @@ def selectAttacker():
     ax=cand[0][-1]
     ay=cand[0][-2]
     a[ax][ay]+=n+m
+    tx,ty=cand[-1][-1],cand[-1][-2]
 
-def selectTarget():
-    global tx,ty
-
-    cand=[]
-    for x in range(n):
-        for y in range(m):
-            if a[x][y] == 0 or (x,y)==(ax,ay): continue
-            cand.append([a[x][y],b[x][y],x+y,y,x])
-
-    cand.sort(key=lambda x: (-x[0], x[1], x[2], x[3]))
-    tx = cand[0][-1]
-    ty = cand[0][-2]
+# def selectTarget():
+#     global tx,ty
+# 
+#     cand=[]
+#     for x in range(n):
+#         for y in range(m):
+#             if a[x][y] == 0 or (x,y)==(ax,ay): continue
+#             cand.append([a[x][y],b[x][y],x+y,y,x])
+# 
+#     cand.sort(key=lambda x: (-x[0], x[1], x[2], x[3]))
+#     tx = cand[0][-1]
+#     ty = cand[0][-2]
 
 def outBound(nx,ny):
 
@@ -162,10 +164,11 @@ def fix():
 
 turn=0
 for turn in range(1,K+1):
-    # 공격자 선정
-    selectAttacker()
+    # 공격자, 공격 대상 선정
+    select()
+    # selectAttacker()
     # 공격 대상 선정
-    selectTarget()
+    # selectTarget()
     # 공격
     attack()
     # 포탑 1개 남았는지 확인
